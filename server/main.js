@@ -10,7 +10,7 @@ const authRoutes = require("./routes/AuthRoutes.js");
 const equipmentRoutes = require("./routes/EquipmentRoutes");
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = 5000;
 
 connectDB();
 
@@ -19,3 +19,8 @@ app.use("/api/equipment", equipmentRoutes);
 
 app.use(cors());
 app.use(express.json());
+
+// start server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
