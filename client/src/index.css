@@ -1,19 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Mozilla+Text:wght@200..700&family=Roboto+Condensed&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Mozilla+Text:wght@200..700&family=Roboto+Condensed&display=swap");
 
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Roboto Condensed", sans-serif;
   --font-heading: "Mozilla Text", sans-serif;
-  
+
   --color-primary: #1f6feb;
   --color-primary-hover: #1558c0;
   --color-secondary: #4f8fd9;
 
   /* Status Colors */
-  --color-success: #52dad3;
-  --color-warning: #42b4d6;
-  --color-danger: #ad78df;
+  --color-success: #16a34a; /* Green */
+  --color-warning: #f59e0b; /* Amber */
+  --color-danger: #dc2626; /* Red */
 
   /* Backgrounds */
   --color-background: #f8fafc;
@@ -24,31 +24,47 @@
 
   /* Text */
   --color-text: #1f2937;
+  --color-text-hover: #adf3ed;
   --color-text-muted: #6b7280;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 .vat {
   color: #2c7af0;
   color: #10479b;
-  color:  #4fb9d9;
+  color: #4fb9d9;
 
   color: #16a361;
   color: #f59e0b;
   color: #dc2626;
   color: #4f8fd9;
 
- color: #2f9e73;
- color: #d99a2b;
+  color: #2f9e73;
+  color: #d99a2b;
   color: #d85757;
   color: #4f8fd9;
 
-  color: #52dad3;   /* Blue with a teal feel */
-  color: #42b4d6;   /* Blue with a warm/periwinkle feel */
-  color: #ad78df;    /* Blue with a violet feel */
-  color: #6aa5f5; 
-  
+  color: #52dad3; /* Blue with a teal feel */
+  color: #42b4d6; /* Blue with a warm/periwinkle feel */
+  color: #ad78df; /* Blue with a violet feel */
+  color: #6aa5f5;
+
   color: #f8fafc;
-  color: #ffffff;
+  color: #adf3ed;
 
   color: #d1d5db;
 
