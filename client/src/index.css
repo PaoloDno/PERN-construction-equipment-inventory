@@ -14,10 +14,11 @@
   --color-success: #16a34a; /* Green */
   --color-warning: #f59e0b; /* Amber */
   --color-danger: #dc2626; /* Red */
+  --color-button: #52dad3; /* Red */
 
   /* Backgrounds */
   --color-background: #f8fafc;
-  --color-surface: #ffffff;
+  --color-surface: #d2eff8;
 
   /* Borders */
   --color-border: #d1d5db;
@@ -43,31 +44,32 @@
   }
 }
 
-.vat {
-  color: #2c7af0;
-  color: #10479b;
-  color: #4fb9d9;
+.var {
+ --color-primary: #2d77e6;
+  --color-primary-hover: #3773cc;
+  --color-secondary: #4f8fd9;
 
-  color: #16a361;
-  color: #f59e0b;
-  color: #dc2626;
-  color: #4f8fd9;
+  /* Status Colors */
+  --color-success: #16a34a; /* Green */
+  --color-warning: #f59e0b; /* Amber */
+  --color-danger: #dc2626; /* Red */
+  --color-button: #5276da; /* Red */
 
-  color: #2f9e73;
-  color: #d99a2b;
-  color: #d85757;
-  color: #4f8fd9;
+  /* Backgrounds */
+  --color-background: #f8fafc;
+  --color-surface: #d2eff8;
 
-  color: #52dad3; /* Blue with a teal feel */
-  color: #42b4d6; /* Blue with a warm/periwinkle feel */
-  color: #ad78df; /* Blue with a violet feel */
-  color: #6aa5f5;
+  /* Borders */
+  --color-border: #4a77bb;
 
-  color: #f8fafc;
-  color: #adf3ed;
+  /* Text */
+  --color-text: #1f2937;
+  --color-text-hover: #0e2c2a;
+  --color-text-muted: #6b7280;
 
-  color: #d1d5db;
+  /* Text */
+  --color-text: #1f2937;
+  --color-text-hover: #adf3ed;
+  --color-text-muted: #6b7280;
 
-  color: #1f2937;
-  color: #6b7280;
 }

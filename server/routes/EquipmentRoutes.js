@@ -1,25 +1,19 @@
 const express = require("express");
 
-const {
-  getEquipments,
-  getEquipment,
-  createEquipment,
-  updateEquipment,
-  deleteEquipment,
-} = require("../controllers/EquipmentController");
 
-const { protect } = require("../middleware/AuthMiddleware");
+const authenticationMiddleware = require("../utils/authenticationMiddleware.js");
+const { getEquipment, getEquipments, createEquipment, updateEquipment, deleteEquipment } = require("../controller/EquipmentController.js");
+const { uploadEquipmentImage } = require("../utils/uploadMiddleware.js");
+
 
 const router = express.Router();
 
-router.get("/", protect, getEquipments);
-
-router.get("/:id", protect, getEquipment);
-
-router.post("/", protect, createEquipment);
-
-router.put("/:id", protect, updateEquipment);
-
-router.delete("/:id", protect, deleteEquipment);
+router.get("/", authenticationMiddleware, getEquipments);
+router.get("/:id", authenticationMiddleware, getEquipment);
+router.post("/", authenticationMiddleware,
+  uploadEquipmentImage.single("image"), createEquipment);
+router.put("/:id", authenticationMiddleware,
+  uploadEquipmentImage.single("image"), updateEquipment);
+router.delete("/:id", authenticationMiddleware, deleteEquipment);
 
 module.exports = router;

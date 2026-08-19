@@ -1,9 +1,9 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { pool } = require("../utils/db");
+const { pool } = require("../utils/db.js");
 
-const generatedToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+const generatedToken = (id, company_id, role) => {
+  return jwt.sign({ id, company_id, role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
 // register user
@@ -11,7 +11,7 @@ const generatedToken = (id) => {
 const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-
+    console.log("AAA");
     // validation
     if (!username || !email || !password) {
       return res.status(400).json({
@@ -25,11 +25,15 @@ const registerUser = async (req, res) => {
       [email],
     );
 
+    console.log("Existing user:", existingUser.rows);
+
     if (existingUser.rows.length > 0) {
       return res.status(400).json({
         message: "Email already exists.",
       });
     }
+
+    console.log("Registering user:", { username, email });
 
     // Hash Password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -47,9 +51,11 @@ const registerUser = async (req, res) => {
 
     const user = newUser.rows[0];
 
+    console.log("User registered:", user);
+
     res.status(201).json({
       message: "User registered successfully.",
-      token: generateToken(user.id),
+      token: generatedToken(user.id, user.company_id, user.role),
       user,
     });
   } catch (error) {
@@ -66,17 +72,17 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
 
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     // Find User
     const result = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
+      "SELECT * FROM users WHERE username = $1",
+      [username]
     );
 
     if (result.rows.length === 0) {
       return res.status(400).json({
-        message: "Invalid email or password."
+        message: "Invalid username or password."
       });
     }
 
@@ -90,12 +96,14 @@ const loginUser = async (req, res) => {
 
     if (!isMatch) {
       return res.status(400).json({
-        message: "Invalid email or password."
+        message: "Invalid username or password."
       });
     }
 
+    
+    console.log("User logged in:", user);
     res.status(200).json({
-      token: generateToken(user.id),
+      token: generatedToken(user.id, user.company_id, user.role),
       user: {
         id: user.id,
         company_id: user.company_id,
@@ -150,8 +158,76 @@ const getProfile = async (req, res) => {
 
 };
 
+const getUsers = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Admin access required",
+      });
+    }
+
+    const page = Math.max(
+      parseInt(req.query.page) || 1,
+      1
+    );
+
+    const requestedLimit =
+      parseInt(req.query.limit) || 10;
+
+    const limit = Math.min(
+      Math.max(requestedLimit, 1),
+      10
+    );
+
+    const offset = (page - 1) * limit;
+
+    const allowedSortColumns = {
+      id: "id",
+      username: "username",
+      email: "email",
+      company_id: "company_id",
+    };
+
+    const sort =
+      allowedSortColumns[req.query.sort] || "id";
+
+    const order =
+      req.query.order?.toLowerCase() === "asc"
+        ? "ASC"
+        : "DESC";
+
+    const result = await pool.query(
+      `
+      SELECT id, company_id, username, email, role
+      FROM users
+      ORDER BY ${sort} ${order}
+      LIMIT $1
+      OFFSET $2
+      `,
+      [limit, offset]
+    );
+
+    res.status(200).json({
+      users: result.rows,
+      pagination: {
+        page,
+        limit,
+        returned: result.rows.length,
+      },
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to retrieve users",
+    });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
-  getProfile
+  getProfile,
+  getUsers,
 };

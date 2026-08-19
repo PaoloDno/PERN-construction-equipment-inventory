@@ -5,13 +5,13 @@ export const registerAction = createAsyncThunk(
   "AuthRegisterAction",
   async (userData, thunkAPI) => {
     try {
-      // const token = thunkAPI.getState().auth.token;
+      console.log("Auth register");
       const response = await api("/auth/register", {
         method: "POST",
         body: userData,
       });
       console.log(response);
-      return response.data;
+      return response;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.data.message);
@@ -28,7 +28,7 @@ export const loginAction = createAsyncThunk(
         body: userData,
       });
       console.log(response);
-      return response.data;
+      return response ;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.data.message);

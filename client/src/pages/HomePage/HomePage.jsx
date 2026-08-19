@@ -1,14 +1,8 @@
 import React from "react";
+import { FaDoorOpen, FaLocationArrow, FaTools, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import {
-  FaDoorOpen,
-  FaLocationArrow,
-  FaTools,
-  FaUser,
-} from "react-icons/fa";
-import { useSelector } from "react-redux";
 
-const LandingPage = () => {
+const HomePage = (props) => {
   const cardsDets = [
     {
       icon: <FaUser size={30} />,
@@ -36,27 +30,15 @@ const LandingPage = () => {
     },
   ];
 
-  const {token} = useSelector((s) => s.auth);
-  console.log(token)
-
   return (
-    <div className="w-full">
-      <div className="flex h-32 w-full items-center justify-center bg-amber-200">
-        <h1 className="text-3xl font-bold">
-          Welcome to the Inventory Management System .com
-        </h1>
-      </div>
-
-      <div className="mx-auto max-w-7xl p-6">
-        <p className="mb-6 text-center text-xl font-semibold">
-          What do you wish to do?
-        </p>
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="flex flex-col w-full min-h-screen p-4">
+      HOMEPAGE
+      <div className="flex flex-col"></div>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {cardsDets.map(({ icon, title, text, to }) => (
             <Link
               key={title}
-              to={token ? to : "/login"}
+              to={to}
               className="rounded-lg border bg-white p-6 shadow transition hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="mb-4 flex justify-center text-blue-600">
@@ -73,9 +55,8 @@ const LandingPage = () => {
             </Link>
           ))}
         </div>
-      </div>
     </div>
   );
 };
 
-export default LandingPage;
+export default HomePage;

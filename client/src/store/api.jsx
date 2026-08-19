@@ -1,21 +1,32 @@
 const baseURL = "http://localhost:5000/api";
 
 export const api = async (
-    endpoints,
-    { method = "GET", body = null, token = null } = {},
-  ) => {
-    const headers = {
-    "Content-Type": "application/json",
-  };
+  endpoint,
+  { method = "GET", body = null, token = null } = {}
+) => {
+  const headers = {};
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+  const isFormData = body instanceof FormData;
+
+  ///// Only use JSON Content-Type for normal objects
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  console.log(`${baseURL}${endpoint}`, method, body, token);
+
+  const response = await fetch(`${baseURL}${endpoint}`, {
     method,
     headers,
-    body: body ? JSON.stringify(body) : null,
+    body: body
+      ? isFormData
+        ? body
+        : JSON.stringify(body)
+      : undefined,
   });
 
   const data = await response.json();

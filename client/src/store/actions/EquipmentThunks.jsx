@@ -15,7 +15,7 @@ export const getEquipmentAction = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error);
     }
   },
 );
@@ -43,13 +43,29 @@ export const createEquipmentAction = createAsyncThunk(
   async ( equipmentData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.token;
+
+      const formData = new FormData();
+
+      formData.append("equipment_name", equipmentData.equipment_name);
+      formData.append("category", equipmentData.category);
+      formData.append("condition", equipmentData.condition);
+      formData.append("note", equipmentData.note);
+      formData.append("status", equipmentData.status);
+      formData.append("serial_number", equipmentData.serial_number);
+      
+      if (equipmentData.image) {
+        formData.append("image", equipmentData.image);
+      }
+
       const response = await api("/equipment/", {
         method: "POST",
-        body: equipmentData,
+        body: formData,
         token,
       });
+      
+      console.log("Project Created:", response);
       console.log(response);
-      return response.data;
+      return response;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.data.message);
