@@ -3,9 +3,58 @@ const { pool } = require("../utils/db.js");
 // GET /api/equipment
 const getEquipments = async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM equipment ORDER BY id ASC");
+    console.log(`Route Parameters: ${JSON.stringify(req.params)}`);
 
-    res.status(200).json(result.rows);
+    const page = Math.max(parseInt(req.params.page) || 1, 1);
+
+    console.log(`Current Page: ${page}`);
+    const limit = 10;
+    const offset = (page - 1) * limit;
+
+    const result = await pool.query(
+      `
+      SELECT
+        e.id,
+        e.equipment_name,
+        e.category,
+        e.condition,
+        e.status,
+        e.note,
+        e.image,
+        u.username,
+        u.company_id
+      FROM equipment e
+      JOIN users u
+        ON e.created_by = u.id
+      ORDER BY e.created_at DESC
+      LIMIT $1 OFFSET $2
+      `,
+      [limit, offset],
+    );
+
+    const countResult = await pool.query(
+      `
+      SELECT COUNT(*) AS total
+      FROM equipment
+      `,
+    );
+
+    const totalEquipments = parseInt(countResult.rows[0].total);
+    const totalPages = Math.ceil(totalEquipments / limit);
+    console.log(
+      `Total Equipments: ${totalEquipments}, Total Pages: ${totalPages}`,
+    );
+    console.log(`Equipments Retrieved: ${result.rows.length}`);
+
+    res.status(200).json({
+      equipments: result.rows,
+      pagination: {
+        currentPage: page,
+        equipmentsPerPage: limit,
+        totalEquipments,
+        totalPages,
+      },
+    });
   } catch (error) {
     console.error(error.message);
 
@@ -19,95 +68,64 @@ const getEquipments = async (req, res) => {
 const getEquipment = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const result = await pool.query("SELECT * FROM equipment WHERE id = $1", [
-      id,
-    ]);
-
+    const result = await pool.query(
+      `
+      SELECT
+      *
+      FROM equipment
+      WHERE id = $1 `,
+      [id],
+    );
     if (result.rows.length === 0) {
-      return res.status(404).json({
-        message: "Equipment not found.",
-      });
+      return res.status(404).json({ message: "Equipment not found." });
     }
-
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    console.error(error.message);
-
-    res.status(500).json({
-      message: "Server Error",
-    });
+    console.error("Get equipment error:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
 // POST /api/equipment
 const createEquipment = async (req, res) => {
-  console.log("BODY:", req.body);
-  console.log("FILE:", req.file);
-
   try {
-    const {
-      equipment_name,
-      category,
-      condition,
-      serial_number,
-      status,
-      note,
-    } = req.body;
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+
+    const { equipment_name, category, condition, note } = req.body;
 
     if (!equipment_name || !category || !condition) {
-      return res.status(400).json({
-        message: "Please complete all required fields.",
-      });
+      return res
+        .status(400)
+        .json({ message: "Please complete all required fields." });
+    }
+    const created_by = req.user?.id;
+    if (!created_by) {
+      return res.status(401).json({ message: "User authentication required." });
     }
 
-    console.log("Creating equipment with data:", {
-      equipment_name,
-      category,
-      condition,
-      serial_number,
-      status,
-      note,
-      image: req.file ? req.file.filename : null,
-    });
-    // Image uploaded by Multer
-    const image = req.file
-      ? `/uploads/equipments/${req.file.filename}`
-      : null;
+    const image = req.file ? `/uploads/equipments/${req.file.filename}` : null;
 
     const result = await pool.query(
-      `
-      INSERT INTO equipment
-      (
+      ` INSERT INTO equipment 
+      ( 
         equipment_name,
         category,
         condition,
-        image,
-        serial_number,
-        status,
-        note
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING *
-      `,
-      [
-        equipment_name,
-        category,
-        condition,
-        image,
-        serial_number,
-        status,
         note,
-      ]
+        image,
+        created_by
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6) RETURNING * `,
+      [equipment_name, category, condition, note || null, image, created_by],
     );
-
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      message: "Server Error",
+    res.status(201).json({
+      message: "Equipment created successfully.",
+      equipment: result.rows[0],
     });
+  } catch (error) {
+    console.error("Create equipment error:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -116,7 +134,7 @@ const updateEquipment = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { equipment_name, category, condition, status } = req.body;
+    const { equipment_name, category, condition, note } = req.body;
 
     // First get the existing equipment
     const existing = await pool.query(
@@ -148,12 +166,12 @@ const updateEquipment = async (req, res) => {
         equipment_name = $1,
         category = $2,
         condition = $3,
-        status = $4,
+        note = $4,
         image_path = $5
       WHERE id = $6
       RETURNING *
       `,
-      [equipment_name, category, condition, status, imagePath, id],
+      [equipment_name, category, condition, note || null, imagePath, id],
     );
 
     res.status(200).json({
@@ -172,15 +190,32 @@ const updateEquipment = async (req, res) => {
 // BORROW EQUIPMENT
 const borrowEquipment = async (req, res) => {
   const client = await pool.connect();
-
+  console.log("Borrow Equipment Request Body:", req.body);
   try {
     const { id } = req.params;
-
-    const { project, condition, user_id } = req.body;
-
+    const { project_id, condition, user_id, note } = req.body;
+    console.log("Borrow Equipment Request Params:", req.params);
+    console.log("Borrow Equipment Request File:", req.file);
+    console.log("Borrow Equipment Request Body:", req.body);
     if (!req.file) {
       return res.status(400).json({
         message: "Before image is required",
+      });
+    }
+    if (!project_id) {
+      return res.status(400).json({
+        message: "Project ID is required",
+      });
+    }
+    if (!user_id) {
+      return res.status(400).json({
+        message: "Authentication is required",
+      });
+    }
+
+    if (!id) {
+      return res.status(400).json({
+        message: "Target Equipment is required",
       });
     }
 
@@ -207,7 +242,7 @@ const borrowEquipment = async (req, res) => {
 
     const equipment = equipmentResult.rows[0];
 
-    if (equipment.status !== "Available") {
+    if (equipment.status !== "available") {
       await client.query("ROLLBACK");
 
       return res.status(400).json({
@@ -217,38 +252,38 @@ const borrowEquipment = async (req, res) => {
 
     const imageBefore = `/uploads/equipment/${req.file.filename}`;
 
-    // Create history record
-    const historyResult = await client.query(
+    // Create project_equipment
+    const assignmentResult = await client.query(
       `
-      INSERT INTO equipment_history
-      (
-        equipment_id,
-        user_id,
-        project,
-        action,
-        condition_before,
-        image_before,
-        borrowed_at
-      )
-      VALUES ($1, $2, $3, 'BORROW', $4, $5, NOW())
-      RETURNING *
-      `,
-      [id, user_id, project, equipment.condition, imageBefore],
+  INSERT INTO project_equipment
+  (
+    project_id,
+    equipment_id,
+    user_id,
+    status,
+    condition_before,
+    image_before,
+    borrowed_at
+  )
+  VALUES ($1, $2, $3, 'borrowed', $4, $5, NOW())
+  RETURNING *
+  `,
+      [project_id, id, user_id, condition, imageBefore],
     );
 
     // Update equipment
     const updatedEquipment = await client.query(
       `
-      UPDATE equipment
-      SET
-        status = 'Borrowed',
-        borrowed_by = $1,
-        borrowed_at = NOW(),
-        condition = $2
-      WHERE id = $3
-      RETURNING *
-      `,
-      [user_id, condition, id],
+  UPDATE equipment
+  SET
+    status = 'borrowed',
+    condition = $1,
+    note = $2,
+    image = $3
+  WHERE id = $4
+  RETURNING *
+  `,
+      [condition, note, imageBefore, id],
     );
 
     await client.query("COMMIT");
@@ -256,7 +291,7 @@ const borrowEquipment = async (req, res) => {
     res.status(200).json({
       message: "Equipment borrowed successfully",
       equipment: updatedEquipment.rows[0],
-      history: historyResult.rows[0],
+      history: assignmentResult.rows[0],
     });
   } catch (error) {
     await client.query("ROLLBACK");
@@ -277,7 +312,6 @@ const returnEquipment = async (req, res) => {
 
   try {
     const { id } = req.params;
-
     const { condition } = req.body;
 
     if (!req.file) {
@@ -286,39 +320,75 @@ const returnEquipment = async (req, res) => {
       });
     }
 
+    if (!condition) {
+      return res.status(400).json({
+        message: "Condition after return is required.",
+      });
+    }
+
     await client.query("BEGIN");
 
-    // Find active transaction
-    const historyResult = await client.query(
+    // Find the equipment
+    const equipmentResult = await client.query(
       `
       SELECT *
-      FROM equipment_history
+      FROM equipment
+      WHERE id = $1
+      FOR UPDATE
+      `,
+      [id],
+    );
+
+    if (equipmentResult.rows.length === 0) {
+      await client.query("ROLLBACK");
+
+      return res.status(404).json({
+        message: "Equipment not found",
+      });
+    }
+
+    const equipment = equipmentResult.rows[0];
+
+    // 2. Make sure equipment is actually borrowed
+    if (equipment.status !== "borrowed") {
+      await client.query("ROLLBACK");
+
+      return res.status(400).json({
+        message: "Equipment is not currently borrowed",
+      });
+    }
+
+    // Find its active project_equipment row
+    const assignmentResult = await client.query(
+      `
+      SELECT *
+      FROM project_equipment
       WHERE equipment_id = $1
-        AND action = 'BORROW'
         AND returned_at IS NULL
-      ORDER BY id DESC
+      ORDER BY borrowed_at DESC
       LIMIT 1
       FOR UPDATE
       `,
       [id],
     );
 
-    if (historyResult.rows.length === 0) {
+    if (assignmentResult.rows.length === 0) {
       await client.query("ROLLBACK");
 
       return res.status(400).json({
-        message: "No active borrowing transaction found",
+        message: "No active project assignment found",
       });
     }
 
-    const history = historyResult.rows[0];
+    const assignment = assignmentResult.rows[0];
 
-    const imageAfter = `/uploads/equipment/${req.file.filename}`;
+    // Image after return
+    const imageAfter = `/uploads/equipments/${req.file.filename}`;
 
-    // Complete transaction
-    const updatedHistory = await client.query(
+    // Close the project_equipment transaction
+    const projectEquipmentResult = await client.query(
       `
-      UPDATE equipment_history
+      UPDATE project_equipment
       SET
         condition_after = $1,
         image_after = $2,
@@ -326,20 +396,17 @@ const returnEquipment = async (req, res) => {
       WHERE id = $3
       RETURNING *
       `,
-      [condition, imageAfter, history.id],
+      [condition, imageAfter, assignment.id],
     );
 
-    // Update current equipment state
-    const equipmentResult = await client.query(
+    // 6. Make equipment available again
+    const updatedEquipment = await client.query(
       `
       UPDATE equipment
       SET
-        status = 'Available',
+        status = 'available',
         condition = $1,
-        borrowed_by = NULL,
-        borrowed_at = NULL,
-        returned_at = NOW(),
-        current_image = $2
+        image = $2
       WHERE id = $3
       RETURNING *
       `,
@@ -348,15 +415,15 @@ const returnEquipment = async (req, res) => {
 
     await client.query("COMMIT");
 
-    res.json({
+    res.status(200).json({
       message: "Equipment returned successfully",
-      equipment: equipmentResult.rows[0],
-      history: updatedHistory.rows[0],
+      equipment: updatedEquipment.rows[0],
+      history: projectEquipmentResult.rows[0],
     });
   } catch (error) {
     await client.query("ROLLBACK");
 
-    console.error(error);
+    console.error("Return equipment error:", error);
 
     res.status(500).json({
       message: "Failed to return equipment",
@@ -371,42 +438,62 @@ const getEquipmentHistory = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({
+        message: "Equipment ID is required.",
+      });
+    }
+
     const result = await pool.query(
       `
       SELECT
-        h.id,
-        h.project,
-        h.action,
-        h.condition_before,
-        h.condition_after,
-        h.image_before,
-        h.image_after,
-        h.borrowed_at,
-        h.returned_at,
-        h.created_at,
+        pe.id,
 
-        u.username
+        pe.project_id,
+        p.project_name,
 
-      FROM equipment_history h
+        pe.equipment_id,
+
+        pe.user_id,
+        u.username,
+
+        pe.status,
+
+        pe.condition_before,
+        pe.condition_after,
+
+        pe.image_before,
+        pe.image_after,
+
+        pe.borrowed_at,
+        pe.returned_at
+
+      FROM equipment e
+
+      INNER JOIN project_equipment pe
+        ON e.id = pe.equipment_id
+
+      LEFT JOIN projects p
+        ON pe.project_id = p.id
 
       LEFT JOIN users u
-        ON h.user_id = u.id
+        ON pe.user_id = u.id
 
-      WHERE h.equipment_id = $1
+      WHERE e.id = $1
 
-      ORDER BY h.created_at DESC
+      ORDER BY pe.borrowed_at DESC
       `,
       [id],
     );
 
-    res.json({
+    res.status(200).json({
       history: result.rows,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Get equipment history error:", error);
 
     res.status(500).json({
-      message: "Failed to get equipment history",
+      message: "Failed to get equipment history.",
     });
   }
 };
@@ -415,31 +502,27 @@ const getEquipmentHistory = async (req, res) => {
 const deleteEquipment = async (req, res) => {
   try {
     const { id } = req.params;
-
     const result = await pool.query(
-      `
-      DELETE FROM equipment
-      WHERE id = $1
-      RETURNING *
-      `,
+      ` DELETE FROM equipment WHERE id = $1 RETURNING * `,
       [id],
     );
-
     if (result.rows.length === 0) {
-      return res.status(404).json({
-        message: "Equipment not found.",
-      });
+      return res.status(404).json({ message: "Equipment not found." });
     }
-
     res.status(200).json({
       message: "Equipment deleted successfully.",
+      equipment: result.rows[0],
     });
   } catch (error) {
-    console.error(error.message);
-
-    res.status(500).json({
-      message: "Server Error",
-    });
+    console.error("Delete equipment error:", error);
+    // Because project_equipment uses ON DELETE RESTRICT
+    if (error.code === "23503") {
+      return res.status(409).json({
+        message:
+          "Equipment cannot be deleted because it has project history. Retire the equipment instead.",
+      });
+    }
+    res.status(500).json({ message: "Server Error" });
   }
 };
 

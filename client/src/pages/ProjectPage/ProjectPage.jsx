@@ -18,14 +18,12 @@ const ProjectPage = (props) => {
     error,
   } = useSelector((s) => s.project);
 
-    const project = projects?.find(
+  const project = projects?.find(
   (project) => String(project.id) === String(projectId)
   );
 
   console.log("project", project);
   
-
-
   useEffect(() => {
       if (!token) {
         navigate("/login");

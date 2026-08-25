@@ -4,15 +4,15 @@ import api from "../api";
 
 export const getEquipmentAction = createAsyncThunk(
   "GetEquipmentAction", 
-  async (_, thunkAPI) => {
+  async (equipmentId, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.token;
-      const response = await api("/equipment/", {
+      const response = await api(`/equipment/${equipmentId}`, {
         method: "GET",
         token,
       });
       console.log(response);
-      return response.data;
+      return response;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error);
@@ -22,15 +22,15 @@ export const getEquipmentAction = createAsyncThunk(
 
 export const getEquipmentsAction = createAsyncThunk(
   "GetEquipmentsAction", 
-  async (_, thunkAPI) => {
+  async (page = 1, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.token;
-      const response = await api("/equipments/", {
+      const response = await api(`/equipment/page/${page}`, {
         method: "GET",
         token,
       });
       console.log(response);
-      return response.data;
+      return response;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.data.message);
@@ -79,14 +79,106 @@ export const updateEquipmentAction = createAsyncThunk(
 async ( equipmentData, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.token;
+
+      const formData = new FormData();
+
+      formData.append("equipment_name", equipmentData.equipment_name);
+      formData.append("category", equipmentData.category);
+      formData.append("condition", equipmentData.condition);
+      formData.append("note", equipmentData.note);
+      
+      if (equipmentData.image) {
+        formData.append("image", equipmentData.image);
+      }
+
       const id = equipmentData.id; 
       const response = await api(`/equipment/${id}`, {
-        method: "POST",
-        body: equipmentData,
+        method: "PUT",
+        body: formData,
         token,
       });
       console.log(response);
       return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.data.message);
+    }
+  },
+);
+
+export const borrowEquipmentAction = createAsyncThunk(
+  "BorrowEquipmentAction",
+async ( equipmentData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.token;
+      
+      const formData = new FormData();
+
+      formData.append("project_id", equipmentData.project_id);
+      formData.append("user_id", equipmentData.user_id);
+      formData.append("condition", equipmentData.condition);
+      formData.append("note", equipmentData.note);
+      
+      if (equipmentData.image) {
+        formData.append("image", equipmentData.image);
+      }
+
+      const id = equipmentData.id; 
+      const response = await api(`/equipment/borrow/${id}`, {
+        method: "POST",
+        body: formData,
+        token,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.data.message);
+    }
+  },
+);
+
+export const returnEquipmentAction = createAsyncThunk(
+  "ReturnEquipmentAction",
+async ( equipmentData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.token;
+      const id = equipmentData.id; 
+      
+      const formData = new FormData();
+
+      formData.append("condition", equipmentData.condition);
+      
+      if (equipmentData.image) {
+        formData.append("image", equipmentData.image);
+      }
+      
+      const response = await api(`/equipment/return/${id}`, {
+        method: "POST",
+        body: formData,
+        token,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.data.message);
+    }
+  },
+);
+
+export const getHistoryEquipmentAction = createAsyncThunk(
+  "GetHistoryEquipmentAction",
+async ( equipmentId, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.token;
+      
+      const response = await api(`/equipment/history/${equipmentId}`, {
+        method: "GET",
+        token,
+      });
+      console.log(response);
+      return response;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.data.message);
@@ -101,7 +193,6 @@ export const deleteEquipmentAction = createAsyncThunk(
       const token = thunkAPI.getState().auth.token; 
       const response = await api(`/equipment/${equipmentId}`, {
         method: "DELETE",
-        body: equipmentData,
         token,
       });
       console.log(response);

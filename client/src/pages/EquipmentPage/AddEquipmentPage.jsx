@@ -14,7 +14,7 @@ const AddEquipmentPage = () => {
   const [formData, setFormData] = useState({
     equipment_name: "",
     category: "",
-    condition: "",
+    condition: "good",
     serial_number: "",
     note: "",
     status: "Available",

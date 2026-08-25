@@ -1,5 +1,3 @@
-// SQSL
-
 BEGIN;
 
 CREATE SEQUENCE company_id_seq
@@ -7,206 +5,161 @@ START WITH 1001
 INCREMENT BY 1;
 
 CREATE TABLE users (
-	id SERIAL PRIMARY KEY,
-	company_id INTEGER UNIQUE NOT NULL
-		DEFAULT nextval('company_id_seq'),
-	username VARCHAR(50) NOT NULL,
-	email VARCHAR(100) UNIQUE NOT NULL,
-	password VARCHAR(255) NOT NULL,
-	role VARCHAR(20) NOT NULL
-		DEFAULT 'user'
-		CHECK (
-			role IN (
-				'user',
-				'admin'
-			)
-		),
-	created_at TIMESTAMP NOT NULL
-		DEFAULT CURRENT_TIMESTAMP
+    id SERIAL PRIMARY KEY,
+
+    company_id INTEGER UNIQUE NOT NULL
+        DEFAULT nextval('company_id_seq'),
+
+    username VARCHAR(50) NOT NULL,
+
+    email VARCHAR(100) UNIQUE NOT NULL,
+
+    password VARCHAR(255) NOT NULL,
+
+    role VARCHAR(20) NOT NULL
+        DEFAULT 'user'
+        CHECK (
+            role IN ('user', 'admin')
+        ),
+
+    created_at TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE projects (
-	id SERIAL PRIMARY KEY,
-	project_name VARCHAR(100) NOT NULL,
-	description TEXT,
-	location VARCHAR(150),
-	status VARCHAR(20) NOT NULL
-		DEFAULT 'planning'
-		CHECK (
-			status IN (
-				'planning',
-				'active',
-				'completed',
-				'onhold',
-				'cancelled'
-			)
-		),
-	started_date DATE NOT NULL,
-	end_date DATE NOT NULL,
-	image VARCHAR(255),
-	created_by INTEGER NOT NULL
-		REFERENCES users(id)
-		ON DELETE CASCADE,
-	created_at TIMESTAMP NOT NULL
-	 DEFAULT CURRENT_TIMESTAMP
+    id SERIAL PRIMARY KEY,
+
+    project_name VARCHAR(100) NOT NULL,
+
+    description TEXT,
+
+    location VARCHAR(150),
+
+    status VARCHAR(20) NOT NULL
+        DEFAULT 'planning'
+        CHECK (
+            status IN (
+                'planning',
+                'active',
+                'completed',
+                'onhold',
+                'cancelled'
+            )
+        ),
+
+    started_date DATE,
+
+    end_date DATE,
+
+    image VARCHAR(255),
+
+    created_by INTEGER NOT NULL
+        REFERENCES users(id)
+        ON DELETE RESTRICT,
+
+    created_at TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE equipment (
-	id SERIAL PRIMARY KEY,
-	equipment_name VARCHAR(100) NOT NULL,
-	category VARCHAR(50),
-	recent_history INTEGER NOT NULL
-		REFERENCES project_equipment(id)
-		ON DELETE CASCADE,
-	note TEXT,,
-	created_by INTEGER NOT NULL
-		REFERENCES users(id)
-		ON DELETE CASCADE,
-	created_at TIMESTAMP NOT NULL
-		DEFAULT CURRENT_TIMESTAMP
+    id SERIAL PRIMARY KEY,
+
+    equipment_name VARCHAR(100) NOT NULL,
+
+    category VARCHAR(50),
+
+    condition VARCHAR(20) NOT NULL
+        DEFAULT 'good'
+        CHECK (
+            condition IN (
+                'excellent',
+                'good',
+                'fair',
+                'poor'
+            )
+        ),
+
+    status VARCHAR(20) NOT NULL
+        DEFAULT 'available'
+        CHECK (
+            status IN (
+                'available',
+                'borrowed',
+                'maintenance',
+                'retire'
+            )
+        ),
+
+    note TEXT,
+
+    image VARCHAR(255),
+
+    created_by INTEGER NOT NULL
+        REFERENCES users(id)
+        ON DELETE RESTRICT,
+
+    created_at TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE project_equipment (
-	id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
-	project_id INTEGER NOT NULL
-		REFERENCES projects(id)
-		ON DELETE CASCADE,
+    project_id INTEGER NOT NULL
+        REFERENCES projects(id)
+        ON DELETE CASCADE,
 
-	equipment_id INTEGER NOT NULL
-		REFERENCES equipment(id)
-		ON DELETE SET NULL,
+    equipment_id INTEGER NOT NULL
+        REFERENCES equipment(id)
+        ON DELETE RESTRICT,
 
-	user_id INTEGER
-		REFERENCES users(id)
-		ON DELETE SET NULL,
+    user_id INTEGER
+        REFERENCES users(id)
+        ON DELETE SET NULL,
 
-	status VARCHAR(20) NOT NULL
-		DEFAULT 'available'
-		CHECK (
-			status IN (
-			'available',
-			'borrowed',
-			'maintenance',
-			'retire'
-			)
-		),
-	condition_before VARCHAR(20) NOT NULL
-		DEFAULT 'good'
-		CHECK (
-			condition IN (
-			'excellent',
-			'good',
-			'fair',
-			'poor'
-			)
-		),
-	condition_after VARCHAR(20) NOT NULL
-		DEFAULT 'good'
-		CHECK (
-			condition IN (
-			'excellent',
-			'good',
-			'fair',
-			'poor'
-			)
-		),
-	borrowed_at TIMESTAMP
-		DEFAULT CURRENT_TIMESTAMP,
-	returned_at TIMESTAMP 
-		DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) NOT NULL
+        DEFAULT 'borrowed'
+        CHECK (
+            status IN (
+                'borrowed',
+                'returned',
+                'cancelled'
+            )
+        ),
 
-	CHECK (
-		ended_at IS NULL
-		OR ended_at >= started_at
-	)
+    condition_before VARCHAR(20) NOT NULL
+        CHECK (
+            condition_before IN (
+                'excellent',
+                'good',
+                'fair',
+                'poor'
+            )
+        ),
+
+    condition_after VARCHAR(20)
+        CHECK (
+            condition_after IN (
+                'excellent',
+                'good',
+                'fair',
+                'poor'
+            )
+        ),
+
+    image_before VARCHAR(255),
+
+    image_after VARCHAR(255),
+
+    borrowed_at TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
+
+    returned_at TIMESTAMP,
+
+    CHECK (
+        returned_at IS NULL
+        OR returned_at >= borrowed_at
+    )
 );
-
-//
-
-
-
-CREATE INDEX idx_users_company_id
-    ON users(company_id);
-
-CREATE INDEX idx_users_email
-    ON users(email);
-
-CREATE INDEX idx_projects_status
-    ON projects(status);
-
-CREATE INDEX idx_projects_name
-    ON projects(project_name);
-
-
-CREATE INDEX idx_equipment_status
-    ON equipment(status);
-
-CREATE INDEX idx_equipment_category
-    ON equipment(category);
-
-CREATE INDEX idx_equipment_name
-    ON equipment(equipment_name);
-
-CREATE INDEX idx_project_equipment_project
-    ON project_equipment(project_id);
-
-CREATE INDEX idx_project_equipment_equipment
-    ON project_equipment(equipment_id);
-
-CREATE INDEX idx_project_equipment_user
-    ON project_equipment(user_id);
-
-CREATE INDEX idx_project_equipment_status
-    ON project_equipment(status);
-
 
 COMMIT;
-
-
-SELECT
-    table_name
-FROM information_schema.tables
-WHERE table_schema = 'public'
-AND table_name IN (
-    'users',
-    'projects',
-    'equipment',
-    'project_equipment'
-)
-ORDER BY table_name;
-
-
-// new commit on S
-
-ALTER TABLE project_equipment
-ADD COLUMN action VARCHAR(20),
-ADD COLUMN condition_before VARCHAR(20),
-ADD COLUMN condition_after VARCHAR(20),
-ADD COLUMN image_before VARCHAR(255),
-ADD COLUMN image_after VARCHAR(255),
-ADD COLUMN borrowed_at TIMESTAMP,
-ADD COLUMN returned_at TIMESTAMP;
-
-
-ALTER TABLE project_equipment
-ADD CONSTRAINT project_equipment_action_check
-CHECK (
-    action IN ('borrow', 'return')
-);
-
-ALTER TABLE project_equipment
-ADD CONSTRAINT project_equipment_condition_before_check
-CHECK (
-    condition_before IN ('excellent', 'good', 'fair', 'poor')
-);
-
-ALTER TABLE project_equipment
-ADD CONSTRAINT project_equipment_condition_after_check
-CHECK (
-    condition_after IN ('excellent', 'good', 'fair', 'poor')
-);
-
-
-DROP TABLE IF EXISTS equipment_history CASCADE;

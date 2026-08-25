@@ -29,11 +29,30 @@ const SelectFormComponent = ({
       >
         <option value="">Select {label}</option>
 
-        {values.map((value) => (
-          <option key={value} value={value}>
-            {value}
-          </option>
-        ))}
+        {values.map((item, index) => {
+          const optionValue =
+            typeof item === "object" && item !== null
+              ? item.key ?? item.value
+              : item;
+
+          const optionLabel =
+            typeof item === "object" && item !== null
+              ? item.value
+              : item;
+
+          return (
+            <option
+              key={
+                typeof item === "object" && item !== null
+                  ? item.key ?? index
+                  : item
+              }
+              value={optionValue}
+            >
+              {optionLabel}
+            </option>
+          );
+        })}
       </select>
 
       {error && (

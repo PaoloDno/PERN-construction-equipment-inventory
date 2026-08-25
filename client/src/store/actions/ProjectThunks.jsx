@@ -99,4 +99,25 @@ export const updateProjectAction = createAsyncThunk(
       return thunkAPI.rejectWithValue(error.data.message);
     }
   }
+);
+
+export const searchNameProjectAction = createAsyncThunk(
+  "SearchNameProjectAction",
+  async (search, thunkAPI) => {
+    try {
+      const { token } = thunkAPI.getState().auth;
+      const response = await api(`/project/search?search=${encodeURIComponent(search)}`,
+      {
+        method: "GET",
+        token,   
+      }
+    );
+
+    console.log(response);
+    return response;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.data.message);
+    }
+  }
 )
