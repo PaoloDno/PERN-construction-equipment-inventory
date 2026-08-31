@@ -10,8 +10,8 @@ const InputFormComponent = (
   }
 ) => {
   return (
-    <div className="flex flex-col justify-center items-start bg-secondary/20 p-2 px-3 rounded-2xl">
-      <div className="relative w-full h-16 bg-primary/60 rounded-lg text-xl">
+    <div className="flex flex-col justify-center items-start bg-secondary/20 p-2 px-3 rounded-md">
+      <div className="relative w-full bg-primary/65 rounded-md text-[1rem]">
         <input
           type={type}
           name={name}
@@ -21,11 +21,12 @@ const InputFormComponent = (
           className="
       peer
       w-full
-      h-full
+      h-12
       bg-transparent
       px-4
       pt-6
       pb-2
+      text-2xl
       text-text
       outline-none
       border-2 border-white/80
@@ -62,7 +63,7 @@ const InputFormComponent = (
 
       <div className="min-h-4 px-1 mt-1 items-start justify-start w-full">
         <p
-          className={`text-xl scale-y-75 transition-opacity duration-200
+          className={`text-[1rem] scale-y-75 transition-opacity duration-200
             ${helper ? "opacity-80" : "opacity-0"}`}
         >
           {helper || " "}

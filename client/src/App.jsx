@@ -1,6 +1,7 @@
 import { BrowserRouter as Router } from "react-router-dom"
 import HeaderComponent from "./components/HeaderComponent"
 import AppRoutes from "./components/AppRoutes"
+import FooterComponent from "./components/FooterComponent"
 
 function App() {
 
@@ -9,6 +10,7 @@ function App() {
       <main>
         <HeaderComponent />
         <AppRoutes />
+        <FooterComponent />
       </main>
     </Router>
   )

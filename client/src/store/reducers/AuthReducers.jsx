@@ -11,6 +11,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
+    dashboard: null,
     token: localStorage.getItem("token"),
     isPending: false,
     isRejected: false,
@@ -60,10 +61,11 @@ const authSlice = createSlice({
       )
       .addMatcher(
         isRejected(loginAction, registerAction, getProfileAction),
-        (state) => {
+        (state, action) => {
           state.isPending = false;
           state.isRejected = true;
           state.error = action.payload || "Something went Wrong!";
+          console.log(action.payload);
         },
       );
   },

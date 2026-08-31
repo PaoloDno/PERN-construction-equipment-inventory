@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,7 +7,8 @@ import {
   getEquipmentAction,
   getHistoryEquipmentAction,
 } from "../../store/actions/EquipmentThunks";
-import BorrowEquipmentModal from "./components/BorrowEquipmentModal";
+import BorrowEquipmentModal from "./components/BorrowEquipmentModal.jsx";
+import ReturnedEquipmentModal from "./components/ReturnedEquipmentModal.jsx";
 
 const EquipmentPage = () => {
   const { equipmentId } = useParams();
@@ -16,7 +17,8 @@ const EquipmentPage = () => {
   const dispatch = useDispatch();
 
   // modal state
-  const [isBorrowModalOpen, setIsBorrowModalOpen] = React.useState(false);
+  const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
 
   const { token } = useSelector((state) => state.auth);
 
@@ -39,7 +41,7 @@ const EquipmentPage = () => {
     dispatch(getEquipmentAction(equipmentId));
 
     dispatch(getHistoryEquipmentAction(equipmentId));
-  }, [dispatch, token, equipmentId, navigate]);
+  }, [dispatch, token, equipmentId, navigate, isBorrowModalOpen, isReturnModalOpen]);
 
   // LOADING
 
@@ -77,6 +79,10 @@ const EquipmentPage = () => {
 
   const handleOpenCloseBorrowModal = () => {
     setIsBorrowModalOpen(!isBorrowModalOpen);
+  };
+
+  const handleOpenCloseReturnModal = () => {
+    setIsReturnModalOpen(!isReturnModalOpen);
   };
 
   return (
@@ -134,6 +140,14 @@ const EquipmentPage = () => {
               <strong>Condition before:</strong>{" "}
               {currentProject.condition_before}
             </p>
+
+            <button
+              type="button"
+              onClick={()=> handleOpenCloseReturnModal()}
+              className="mt-6 px-4 py-2 bg-gray-500"
+            >
+              Return
+            </button>
           </div>
         ) : (
           <p className="text-gray-500">Equipment is currently available.</p>
@@ -142,7 +156,7 @@ const EquipmentPage = () => {
         {equipment.status === "available" && (
           <button
             type="button"
-            onClick={handleOpenCloseBorrowModal}
+            onClick={() => handleOpenCloseBorrowModal()}
             className="mt-6 px-4 py-2 bg-gray-500"
           >
             BORROW
@@ -205,6 +219,13 @@ const EquipmentPage = () => {
           onClose={() => handleOpenCloseBorrowModal()}
         />
       )}
+
+      {isReturnModalOpen && (
+  <ReturnedEquipmentModal
+    equipment={equipment}
+    onClose={() => handleOpenCloseReturnModal()}
+  />
+)}
     </div>
   );
 };

@@ -8,6 +8,7 @@ import AuthInput from "./AuthInputs";
 
 import img from "../../assets/images/auth.jpg";
 import { loginAction } from "../../store/actions/AuthThunks";
+import ErrorBannerComponent from "../../components/utils/ErrorBannerComponent";
 
 const LoginPage = () => {
   const { isPending, error } = useSelector((state) => state.auth);
@@ -130,7 +131,7 @@ const LoginPage = () => {
               name="password"
               value={userData.password}
               onChange={handleUserChange}
-              helper=""
+              helper="Enter password."
               error={authError.password}
             />
 
@@ -150,6 +151,8 @@ const LoginPage = () => {
             </button>
             {error ? error : ""}
           </form>
+
+          <ErrorBannerComponent err={error} />
 
           <button
             type="button"

@@ -13,8 +13,8 @@ export const registerAction = createAsyncThunk(
       console.log(response);
       return response;
     } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      console.log(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -30,8 +30,8 @@ export const loginAction = createAsyncThunk(
       console.log(response);
       return response ;
     } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      console.log(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -47,7 +47,24 @@ export const getProfileAction = createAsyncThunk(
       });
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
+
+
+export const getDashBoardAction = createAsyncThunk(
+  "GetDashboardAction",
+  async (_ , thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.token;
+      const response = await api("/auth/dashboard", {
+        method: "GET",
+        token,
+      });
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+)

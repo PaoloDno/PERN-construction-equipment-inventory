@@ -15,7 +15,7 @@ import {
 const equipmentSlice = createSlice({
   name: "equipment",
   initialState: {
-    equipment: null,
+    equipment: {},
     equipments: [],
     history: [],
     pagination: {
@@ -54,14 +54,12 @@ const equipmentSlice = createSlice({
       })
       .addCase(borrowEquipmentAction.fulfilled, (state, action) => {
         state.equipment = action.payload.equipment;
-        state.history = action.payload.history;
         state.isPending = false;
         state.isRejected = false;
         state.error = null;
       })
       .addCase(returnEquipmentAction.fulfilled, (state, action) => {
         state.equipment = action.payload.equipment;
-        state.history = action.payload.history;
         state.isPending = false;
         state.isRejected = false;
         state.error = null;
@@ -106,7 +104,7 @@ const equipmentSlice = createSlice({
           returnEquipmentAction,
           getHistoryEquipmentAction,
         ),
-        (state) => {
+        (state, action) => {
           state.isPending = false;
           state.isRejected = true;
           state.error = action.payload.error || "Something went Wrong!";

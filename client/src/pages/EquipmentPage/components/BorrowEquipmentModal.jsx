@@ -273,6 +273,7 @@ const BorrowEquipmentModal = ({equipment, onClose }) => {
     };
 
 
+
     // Validate
     if (!validateInputs()) {
       console.log("invalidated inputes");
@@ -325,6 +326,9 @@ const BorrowEquipmentModal = ({equipment, onClose }) => {
       });
 
     }
+       finally {
+        navigate(`/equipment/${submitData.id}`)
+      }
 
   };
 

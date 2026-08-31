@@ -15,7 +15,7 @@ export const getEquipmentAction = createAsyncThunk(
       return response;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -33,7 +33,7 @@ export const getEquipmentsAction = createAsyncThunk(
       return response;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -68,7 +68,7 @@ export const createEquipmentAction = createAsyncThunk(
       return response;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -101,7 +101,7 @@ async ( equipmentData, thunkAPI) => {
       return response.data;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -133,7 +133,7 @@ async ( equipmentData, thunkAPI) => {
       return response;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -162,7 +162,7 @@ async ( equipmentData, thunkAPI) => {
       return response;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -181,7 +181,7 @@ async ( equipmentId, thunkAPI) => {
       return response;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -199,7 +199,7 @@ export const deleteEquipmentAction = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 )

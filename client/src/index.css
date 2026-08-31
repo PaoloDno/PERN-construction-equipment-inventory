@@ -6,13 +6,13 @@
   --font-sans: "Roboto Condensed", sans-serif;
   --font-heading: "Mozilla Text", sans-serif;
 
-  --color-primary: #1f6feb;
+  --color-primary: #7eaff8;
   --color-primary-hover: #1558c0;
-  --color-secondary: #4f8fd9;
+  --color-secondary: #defaf5;
 
   /* Status Colors */
   --color-success: #16a34a; /* Green */
-  --color-warning: #f59e0b; /* Amber */
+  --color-warning: #ebae45; /* Amber */
   --color-danger: #dc2626; /* Red */
   --color-button: #52dad3; /* Red */
 
@@ -34,6 +34,7 @@
     font-family: var(--font-sans);
     background-color: var(--color-background);
     color: var(--color-text);
+    font-size: 16px;
   }
 
   body {
@@ -45,15 +46,15 @@
 }
 
 .var {
- --color-primary: #2d77e6;
+ --color-primary: #7eaff8;
   --color-primary-hover: #3773cc;
-  --color-secondary: #4f8fd9;
+  --color-secondary: #defaf5;
 
   /* Status Colors */
   --color-success: #16a34a; /* Green */
-  --color-warning: #f59e0b; /* Amber */
+  --color-warning: #ebae45; /* Amber */
   --color-danger: #dc2626; /* Red */
-  --color-button: #5276da; /* Red */
+  --color-button: #7fc7bd; /* Red */
 
   /* Backgrounds */
   --color-background: #f8fafc;

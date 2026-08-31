@@ -54,7 +54,7 @@ export const getProjectAction = createAsyncThunk(
       return response;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   },
 );
@@ -76,7 +76,6 @@ export const getProjectsAction = createAsyncThunk(
 
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error?.data?.message ||
         error?.message ||
         "Failed to get projects"
       );
@@ -96,7 +95,7 @@ export const updateProjectAction = createAsyncThunk(
       console.log(response);
       return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
@@ -117,7 +116,7 @@ export const searchNameProjectAction = createAsyncThunk(
     return response;
     } catch (error) {
       console.log(error);
-      return thunkAPI.rejectWithValue(error.data.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 )

@@ -12,6 +12,8 @@ const projectSlice = createSlice({
   name: "project",
   initialState: {
     project: null,
+    activeEquipment: null,
+    equipmentHistory: null,
     projects: [],
     projectsName: [],
     pagination: {
@@ -32,8 +34,10 @@ const projectSlice = createSlice({
         state.isPending = false;
         state.isRejected = false;
       })
-      .addCase(getProjectAction.fulfilled, (action, state) => {
+      .addCase(getProjectAction.fulfilled, (state, action) => {
         state.project = action.payload.project;
+        state.activeEquipment = action.payload.activeEquipment;
+        state.equipmentHistory = action.payload.equipmentHistory;
         state.isPending = false;
         state.isRejected = false;
       })
@@ -76,7 +80,7 @@ const projectSlice = createSlice({
           updateProjectAction,
           searchNameProjectAction,
         ),
-        (state) => {
+        (state, action) => {
           state.isPending = false;
           state.isRejected = true;
           state.error = action.payload || "Something went Wrong!";

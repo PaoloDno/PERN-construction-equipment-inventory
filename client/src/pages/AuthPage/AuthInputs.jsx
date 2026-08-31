@@ -8,8 +8,8 @@ const AuthInputs = ({
   helper,
 }) => {
   return (
-    <div className="flex flex-col justify-center items-start bg-secondary/20 p-3 rounded-2xl container">
-      <div className="relative w-full h-16 bg-primary/60 rounded-lg">
+    <div className="flex flex-col justify-center items-start bg-secondary/10 p-2 rounded-xl container">
+      <div className="relative w-full h-14 bg-primary/20 rounded-lg">
         <input
           type={type}
           name={name}
@@ -21,7 +21,8 @@ const AuthInputs = ({
       w-full
       h-full
       bg-transparent
-      px-4
+      px-2
+      md:px-4
       pt-6
       pb-2
       text-text
@@ -60,7 +61,7 @@ const AuthInputs = ({
 
       <div className="min-h-4 px-1 mt-1 items-start justify-start w-full">
         <p
-          className={`text-xl scale-y-75 transition-opacity duration-200
+          className={`text-[0.8rem] scale-y-75 transition-opacity duration-200
             ${helper ? "opacity-80" : "opacity-0"}`}
         >
           {helper || " "}
@@ -69,7 +70,7 @@ const AuthInputs = ({
 
       <div className="min-h-4">
         <p
-          className={`text-xl text-red-500 scale-80 transition-opacity duration-200
+          className={`text-[1.2rem] text-red-500 scale-80 transition-opacity duration-200
             ${error ? "opacity-100" : "opacity-0"}`}
         >
           {error || " "}
