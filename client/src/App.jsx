@@ -7,7 +7,7 @@ function App() {
 
   return (
     <Router>
-      <main>
+      <main className="flex flex-col w-full max-w-screen min-h-screen overflow-hidden">
         <HeaderComponent />
         <AppRoutes />
         <FooterComponent />

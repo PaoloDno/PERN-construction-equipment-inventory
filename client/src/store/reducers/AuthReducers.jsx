@@ -2,6 +2,7 @@ import { isRejected } from "@reduxjs/toolkit";
 import { isPending } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  getDashBoardAction,
   getProfileAction,
   loginAction,
   registerAction,
@@ -51,8 +52,13 @@ const authSlice = createSlice({
         state.isPending = false;
         state.isRejected = false;
       })
+      .addCase(getDashBoardAction.fulfilled, (state, action) => {
+        state.dashboard = action.payload.dashboard;
+        state.isPending = false;
+        state.isRejected = false;
+      })
       .addMatcher(
-        isPending(loginAction, registerAction, getProfileAction),
+        isPending(loginAction, registerAction, getProfileAction, getDashBoardAction),
         (state) => {
           state.isPending = true;
           state.isRejected = false;
@@ -60,7 +66,7 @@ const authSlice = createSlice({
         },
       )
       .addMatcher(
-        isRejected(loginAction, registerAction, getProfileAction),
+        isRejected(loginAction, registerAction, getProfileAction, getDashBoardAction),
         (state, action) => {
           state.isPending = false;
           state.isRejected = true;

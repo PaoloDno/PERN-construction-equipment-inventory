@@ -7,6 +7,7 @@ import {
   deleteEquipmentAction,
   getEquipmentAction,
   getEquipmentsAction,
+  getEquipmentSearchAction,
   getHistoryEquipmentAction,
   returnEquipmentAction,
   updateEquipmentAction,
@@ -76,6 +77,13 @@ const equipmentSlice = createSlice({
         state.isRejected = false;
         state.error = null;
       })
+      .addCase(getEquipmentSearchAction.fulfilled, (state, action)=> {
+        state.equipments = action.payload.equipments;
+        state.pagination = action.payload.pagination;
+        state.isPending = false;
+        state.isRejected = false;
+        state.error = null;
+      })
       .addMatcher(
         isPending(
           getEquipmentAction,
@@ -86,6 +94,7 @@ const equipmentSlice = createSlice({
           borrowEquipmentAction,
           returnEquipmentAction,
           getHistoryEquipmentAction,
+          getEquipmentSearchAction,
         ),
         (state) => {
           state.isPending = true;
@@ -103,6 +112,7 @@ const equipmentSlice = createSlice({
           borrowEquipmentAction,
           returnEquipmentAction,
           getHistoryEquipmentAction,
+          getEquipmentSearchAction,
         ),
         (state, action) => {
           state.isPending = false;

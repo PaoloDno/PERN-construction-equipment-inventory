@@ -63,7 +63,7 @@ const HeaderComponent = () => {
     }
 
     return (
-      <div className="flex flex-row gap-3 object-center justify-end w-1/3 md:w-full items-center bg-primary pr-4 md:pr-8 px-2 font-heading">
+      <div className="flex flex-row z-30 gap-3 object-center justify-end w-1/3 md:w-full items-center bg-primary pr-4 md:pr-8 px-2 font-heading">
         <div className="hidden lg:flex flex-row gap-3 object-center justify-end w-full items-center pr-4 md:pr-8 text-[14px]">
           {links.map(({ to, label, icon }) => (
             <Link
@@ -97,7 +97,7 @@ const HeaderComponent = () => {
               className="
                 absolute right-0 top-0
                 h-full w-72
-                bg-white/95
+                bg-slate-700/95
                 shadow-xl
                 translate-x-0
                 animate-[slideIn_0.75s_ease-out]
@@ -109,13 +109,14 @@ const HeaderComponent = () => {
                 </button>
               </div>
 
-              <div className="flex flex-col gap-2 p-2 pr-4">
+              <div className="flex flex-col gap-2 p-2 pr-4 ">
                 {links.map(({ to, label, icon }) => (
                   <Link
                     key={to}
                     to={to}
                     onClick={() => setMobileNav(false)}
-                    className="flex w-full items-center gap-3 rounded-md p-3 hover:bg-gray-100"
+                    className="flex w-full items-center bg-white/90 gap-3 
+                    rounded-md p-3 hover:bg-gray-100"
                   >
                     {icon}
                     <span>{label}</span>
@@ -125,7 +126,8 @@ const HeaderComponent = () => {
                 {token && (
                   <button
                     onClick={handleLogout}
-                    className="flex items-center justify-center w-full rounded-md bg-warning p-3 text-white hover:bg-red-600"
+                    className="flex items-center justify-center w-full 
+                    rounded-md bg-warning p-3 hover:bg-red-600"
                   >
                     Logout
                   </button>
@@ -139,7 +141,7 @@ const HeaderComponent = () => {
   };
 
   return (
-    <header className="flex flex-row z-20 px-2 min-h-20 min-w-screen bg-primary">
+    <header className="flex flex-row z-30 px-2 min-h-20 min-w-screen bg-primary">
       <div
         className="flex flex-row lg:min-w-1/3 h-20 justify-center cursor-pointer items-center mx-2 gap-2"
         onClick={() => navigate("/")}

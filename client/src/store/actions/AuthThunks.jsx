@@ -62,6 +62,8 @@ export const getDashBoardAction = createAsyncThunk(
         method: "GET",
         token,
       });
+      console.log(response);
+      return response;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.message);

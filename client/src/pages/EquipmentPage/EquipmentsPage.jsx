@@ -1,13 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { getEquipmentsAction } from "../../store/actions/EquipmentThunks";
+import { getEquipmentsAction, getEquipmentSearchAction } from "../../store/actions/EquipmentThunks";
+import EquipmentCards from "../../components/cards/EquipmentCards";
+import {
+  FaBox,
+  FaBoxes,
+  FaFoursquare,
+  FaList,
+  FaPlus,
+  FaPlusCircle,
+} from "react-icons/fa";
+import PaginationComponent from "../../components/utils/PaginationsComponent";
+import EquipmentCardList from "../../components/cards/EquipmentCardList";
+import { MdCardTravel, MdSdCard } from "react-icons/md";
 
 const EquipmentsPage = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { token } = useSelector((state) => state.auth);
+  const [viewCardMode, setViewCardMode] = useState(true);
+
+  const [searchFilters, setSearchFilters] = useState({
+    search: "",
+    status: "",
+    condition: "",
+  });
 
   const { equipments, pagination, isPending, isRejected, error } = useSelector(
     (state) => state.equipment,
@@ -28,24 +47,36 @@ const EquipmentsPage = (props) => {
       return;
     }
 
-    dispatch(getEquipmentsAction(page));
+    const { search, status, condition } = searchFilters;
+
+    if (!search && !status && !condition) {
+      dispatch(getEquipmentsAction(page));
+    } else {
+      dispatch(
+        getEquipmentSearchAction({
+          page,
+          search,
+          status,
+          condition,
+        }),
+      );
+    }
   };
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <div className="flex flex-col w-full p-4 gap-2">EQUIPMENTS</div>
-
-      <div className="flex justify-between items-center">
+      <div className="flex items-center gap-2 h-[15vh] justify-between md:justify-start px-4">
         {/** utilities bar */}
-        <div className="flex flex-row justify-between items-center">
-          Equipments
+
+        <div className="flex flex-col px-4 gap-2 text-xl md:text-2xl">
+          EQUIPMENTS
         </div>
 
         <Link
           to="/addEquip"
-          className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700"
+          className="flex flex-row p-2 text-[14px] items-center justify-center gap-2 px-4 py-2 bg-button rounded-md hover:bg-success"
         >
-          Add Equipment
+          <FaPlusCircle /> Add Equipment
         </Link>
       </div>
 
@@ -65,83 +96,186 @@ const EquipmentsPage = (props) => {
       )}
 
       {!isPending && !isRejected && (
-        <div className="flex flex-col w-full p-4">
-          <div className="flex justify-between items-center p-4">
-            <h2>Equipment List</h2>
+        <div className="flex flex-col w-full py-4 bg-primary">
+          <div className="flex text-white flex-col w-full justify-start items-start p-2 bg-primary-hover">
+            <div className="flex flex-col lg:flex-row w-full gap-3 lg:items-center lg:justify-between">
+              {/* Title + View Toggle */}
+              <div className="flex flex-row gap-2 text-xl items-center">
+                <h2>Equipment List</h2>
 
-            <p>{pagination.totalEquipments} equipments</p>
+                <button
+                  onClick={() => setViewCardMode((prev) => !prev)}
+                  className="
+                    hidden lg:flex
+                    items-center justify-center
+                    px-2
+                    min-w-[120px]
+                    rounded-md
+                    bg-button
+                    hover:bg-primary-hover
+                    border-white/30
+                    border-2
+                    text-sm
+                  "
+                >
+                  {viewCardMode ? "List" : "Cards"}
+                </button>
+              </div>
 
+              {/* Search */}
+              <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-auto">
+                {/* Search */}
+                <input
+                  type="text"
+                  value={searchFilters.search}
+                  onChange={(e) =>
+                    setSearchFilters((prev) => ({
+                      ...prev,
+                      search: e.target.value,
+                    }))
+                  }
+                  placeholder="Search equipment..."
+                  className="
+                  w-full lg:w-64
+                  px-4 py-2
+                  rounded-md
+                  bg-white
+                  text-gray-800
+                  border-2 border-gray-300
+                  outline-none
+                  focus:border-gray-500
+                  "
+                />
+
+                {/* Status */}
+                <select
+                  value={searchFilters.status}
+                  onChange={(e) =>
+                    setSearchFilters((prev) => ({
+                      ...prev,
+                      status: e.target.value,
+                    }))
+                  }
+                  className="
+                    px-3 py-2
+                    rounded-md
+                    bg-white
+                    text-gray-800
+                    border-2 border-gray-300
+                    outline-none
+                    focus:border-gray-500
+                  "
+                >
+                  <option value="">All Status</option>
+                  <option value="available">Available</option>
+                  <option value="borrowed">Borrowed</option>
+                  <option value="maintenance">Maintenance</option>
+                </select>
+
+                {/* Condition */}
+                <select
+                  value={searchFilters.condition}
+                  onChange={(e) =>
+                    setSearchFilters((prev) => ({
+                      ...prev,
+                      condition: e.target.value,
+                    }))
+                  }
+                  className="
+                    px-3 py-2
+                    rounded-md
+                    bg-white
+                    text-gray-800
+                    border-2 border-gray-300
+                    outline-none
+                    focus:border-gray-500
+                  "
+                >
+                  <option value="">All Conditions</option>
+                  <option value="excellent">Excellent</option>
+                  <option value="good">Good</option>
+                  <option value="fair">Fair</option>
+                  <option value="poor">Poor</option>
+                </select>
+
+                {/* Search Button */}
+                <button
+                  onClick={() => {
+                    dispatch(
+                      getEquipmentSearchAction({
+                        ...searchFilters,
+                        page: 1,
+                      }),
+                    );
+                  }}
+                  className="
+      px-5 py-2
+      rounded-md
+      bg-button
+      border-2 border-white/30
+      hover:bg-primary-hover
+      hover:text-white
+      transition
+    "
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+
+            <div className="flex w-full items-center justify-between mt-2">
+              <p className="text-sm">{pagination.totalEquipments} equipments</p>
+
+              <PaginationComponent
+                pagination={pagination}
+                handlePageChange={handlePageChange}
+              />
+            </div>
+          </div>
+          <div>
             {equipments.length === 0 ? (
               <div>
-                <p className="text-gray-500">No projects found.</p>
+                <p className="text-gray-500">No Equipments found.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-                {equipments.map((equipment) => (
-                  <div>
-                    <div
-                      key={equipment.id}
-                      className="border border-gray-200 rounded-lg overflow-hidden"
-                    >
-                      <div className="w-full h-48 bg-gray-100">
-                        {equipment.image ? (
-                          <img
-                            src={`http://localhost:5000${equipment.image}`}
-                            alt={equipment.equipment_name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-gray-400">No Image</span>
-                          </div>
-                        )}
-                      </div>
+              <>
+                {/* Mobile / tablet — always cards */}
+                <div className="lg:hidden grid grid-cols-1 gap-2 p-2">
+                  {equipments.map((equipment) => (
+                    <EquipmentCards key={equipment.id} equipment={equipment} />
+                  ))}
+                </div>
+
+                {/* Desktop — user can switch views */}
+                <div className="hidden lg:block">
+                  {viewCardMode ? (
+                    <div className="grid grid-cols-1 gap-2 lg:grid-cols-4 p-2 items-start">
+                      {equipments.map((equipment) => (
+                        <EquipmentCards
+                          key={equipment.id}
+                          equipment={equipment}
+                        />
+                      ))}
                     </div>
-
-                    {/** equipment details */}
-                    <div className="flex flex-col">
-                      <div className="flex flex-col p-4">
-                        <h3 className="font-semibold text-gray-800">
-                          {equipment.equipment_name}
-                        </h3>
-
-                        <span className="text-xs px-2 py-1 bg-gray-100 rounded">
-                          {equipment.status}
-                        </span>
-
-                        <span className="text-xs px-2 py-1 bg-gray-100 rounded">
-                          {equipment.condition}
-                        </span>
-
-                        <p className="text-sm text-gray-500 mt-2 line-clamp-3">
-                          {equipment.note || "No notes"}
-                        </p>
-
-                        {/** widgets */}
-                        <div className="w-full h-20 bg-gray-700/20 p-2">
-                          <button
-                            onClick={() =>
-                              navigate(`/equipment/${equipment.id}`)
-                            }
-                            className="w-full mt-4 px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-100"
-                          >
-                            View Equipment
-                          </button>
-                        </div>
-                      </div>
+                  ) : (
+                    <div className="flex flex-col gap-2 p-2">
+                      {equipments.map((equipment) => (
+                        <EquipmentCardList
+                          key={equipment.id}
+                          equipment={equipment}
+                        />
+                      ))}
                     </div>
-                  </div>
-                ))}
-              </div>
+                  )}
+                </div>
+              </>
             )}
-
 
             {/*pagination */}
-            {pagination.totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-8">
-
-              </div>
-            )}
+            <PaginationComponent
+              pagination={pagination}
+              handlePageChange={handlePageChange}
+            />
           </div>
         </div>
       )}

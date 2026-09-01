@@ -7,9 +7,9 @@ export const sanitizeInput = {
         .trim()
         .replace(/\s+/g, " "),
 
-    username: (value = "") => value.trim().toLowerCase().replace(/\s+/g, ""),
+    username: (value = "") => value.trim().toLowerCase().replace(/<[^>]*>/g, "").replace(/\s+/g, ""),
 
-    email: (value = "") => value.trim().toLowerCase(),
+    email: (value = "") => value.trim().replace(/<[^>]*>/g, ""),
 
     number: (value = "") => value.replace(/\D/g, ""),
 

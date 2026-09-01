@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate} from "react-router-dom";
 import { getProjectsAction } from "../../store/actions/ProjectThunks";
+import PaginationComponent from "../../components/utils/PaginationsComponent";
 
 const ProjectsPage = () => {
 
@@ -212,65 +213,7 @@ const ProjectsPage = () => {
           {/* Pagination */}
           {pagination.totalPages > 1 && (
 
-            <div className="flex justify-center items-center gap-2 mt-8">
-
-              {/* Previous */}
-              <button
-                onClick={() =>
-                  handlePageChange(
-                    pagination.currentPage - 1
-                  )
-                }
-                disabled={pagination.currentPage === 1}
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Previous
-              </button>
-
-
-              {/* Page numbers */}
-              {Array.from(
-                {
-                  length: pagination.totalPages,
-                },
-                (_, index) => index + 1
-              ).map((page) => (
-
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`
-                    w-9 h-9 rounded-md text-sm
-                    ${
-                      pagination.currentPage === page
-                        ? "bg-gray-800 text-white"
-                        : "border border-gray-300 hover:bg-gray-100"
-                    }
-                  `}
-                >
-                  {page}
-                </button>
-
-              ))}
-
-
-              {/* Next */}
-              <button
-                onClick={() =>
-                  handlePageChange(
-                    pagination.currentPage + 1
-                  )
-                }
-                disabled={
-                  pagination.currentPage ===
-                  pagination.totalPages
-                }
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Next
-              </button>
-
-            </div>
+            <PaginationComponent pagination={pagination} handlePageChange={handlePageChange} />
 
           )}
 

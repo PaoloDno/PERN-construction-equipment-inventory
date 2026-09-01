@@ -202,4 +202,46 @@ export const deleteEquipmentAction = createAsyncThunk(
       return thunkAPI.rejectWithValue(error.message);
     }
   }
-)
+);
+
+export const getEquipmentSearchAction = createAsyncThunk(
+  "GetEquipmentSearchAction",
+  async (
+    {
+      page = 1,
+      search = "",
+      status = "",
+      condition = "",
+    },
+    thunkAPI
+  ) => {
+    try {
+      const token = thunkAPI.getState().auth.token;
+
+      const params = new URLSearchParams({
+        page: String(page),
+        search,
+        status,
+        condition,
+      });
+
+      const response = await api(
+        `/equipment/search?${params.toString()}`,
+        {
+          method: "GET",
+          token,
+        }
+      );
+
+      console.log(response);
+
+      return response;
+    } catch (error) {
+      console.log(error);
+
+      return thunkAPI.rejectWithValue(
+        error.message
+      );
+    }
+  }
+);

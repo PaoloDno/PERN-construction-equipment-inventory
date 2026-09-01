@@ -41,7 +41,14 @@ const EquipmentPage = () => {
     dispatch(getEquipmentAction(equipmentId));
 
     dispatch(getHistoryEquipmentAction(equipmentId));
-  }, [dispatch, token, equipmentId, navigate, isBorrowModalOpen, isReturnModalOpen]);
+  }, [
+    dispatch,
+    token,
+    equipmentId,
+    navigate,
+    isBorrowModalOpen,
+    isReturnModalOpen,
+  ]);
 
   // LOADING
 
@@ -143,7 +150,7 @@ const EquipmentPage = () => {
 
             <button
               type="button"
-              onClick={()=> handleOpenCloseReturnModal()}
+              onClick={() => handleOpenCloseReturnModal()}
               className="mt-6 px-4 py-2 bg-gray-500"
             >
               Return
@@ -221,11 +228,11 @@ const EquipmentPage = () => {
       )}
 
       {isReturnModalOpen && (
-  <ReturnedEquipmentModal
-    equipment={equipment}
-    onClose={() => handleOpenCloseReturnModal()}
-  />
-)}
+        <ReturnedEquipmentModal
+          equipment={equipment}
+          onClose={() => handleOpenCloseReturnModal()}
+        />
+      )}
     </div>
   );
 };
