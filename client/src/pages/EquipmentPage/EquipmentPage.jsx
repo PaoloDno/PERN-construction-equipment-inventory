@@ -9,6 +9,7 @@ import {
 } from "../../store/actions/EquipmentThunks";
 import BorrowEquipmentModal from "./components/BorrowEquipmentModal.jsx";
 import ReturnedEquipmentModal from "./components/ReturnedEquipmentModal.jsx";
+import { FaBackspace, FaBackward } from "react-icons/fa";
 
 const EquipmentPage = () => {
   const { equipmentId } = useParams();
@@ -93,12 +94,55 @@ const EquipmentPage = () => {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen p-6 gap-6">
+    <div className="flex flex-col w-full min-h-screen p-6 gap-6 items-center justify-center">
       {/* EQUIPMENT INFORMATION */}
 
-      <div className="border rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-4">{equipment.equipment_name}</h1>
+      <div className="fixed inset-0 -z-10 min-h-screen w-full bg-gradient-to-br from-blue-300/80 via-indigo-500 to-purple-600 opacity-70" />
 
+      <button
+        onClick={() => navigate("/equipments")}
+        className="flex hover:underline flex-row text-md lg:text-2xl text-white items-center gap-2 h-[10vh] lg:h-[12vh] bg-primary-hover/70 w-full max-w-3xl justify-between md:justify-start px-4"
+      >
+        <FaBackward size={24} />
+        <span>Go back to Equipments Page</span>
+      </button>
+
+      <div className="grid col-span-1 md:grid-cols-2 border rounded-lg p-6 w-full max-w-3xl bg-white/70 gap-2">
+        {equipment.image ? (
+          <img
+            src={`http://localhost:5000${equipment.image}`}
+            alt={equipment.equipment_name}
+            className="w-full h-[18vh] md:h-[20vh] object-cover"
+          />
+        ) : (
+          <div className="w-full h-[15vh] flex items-center justify-center bg-gray-600">
+            <span className="text-gray-400">No Image</span>
+          </div>
+        )}
+
+        <span>
+          <h1 className="text-2xl font-bold mb-4">
+            {equipment.equipment_name}
+            <p className="flex flex-row gap-2 items-center justify-start">
+              <strong>Status:</strong>{" "}
+              <span
+                className={`flex w-full justify-center text-[16px] px-2 py-1 max-w-[120px] items-center justify-center ${
+                  equipment.status === "available"
+                    ? "text-success/80"
+                    : equipment.status === "borrowed"
+                      ? "text-primary-hover"
+                      : equipment.status === "retire"
+                        ? "text-danger"
+                        : equipment.status === "maintenance"
+                          ? "text-yellow-500 "
+                          : "text-black"
+                }`}
+              >
+                {equipment.status}
+              </span>
+            </p>
+          </h1>
+        </span>
         <div className="flex flex-col gap-2">
           <p>
             <strong>Category:</strong> {equipment.category}
@@ -107,15 +151,6 @@ const EquipmentPage = () => {
           <p>
             <strong>Condition:</strong> {equipment.condition}
           </p>
-
-          <p>
-            <strong>Status:</strong> {equipment.status}
-          </p>
-
-          <p>
-            <strong>Created by:</strong> {equipment.username}
-          </p>
-
           {equipment.note && (
             <p>
               <strong>Note:</strong> {equipment.note}
@@ -126,7 +161,7 @@ const EquipmentPage = () => {
 
       {/* CURRENT PROJECT */}
 
-      <div className="border rounded-lg p-6">
+      <div className="flex flex-col border rounded-lg p-6 w-full max-w-3xl bg-white/70 gap-2 min-h-[25vh]">
         <h2 className="text-xl font-bold mb-4">Current Project</h2>
 
         {equipment.status === "borrowed" && currentProject ? (
@@ -151,8 +186,8 @@ const EquipmentPage = () => {
             <button
               type="button"
               onClick={() => handleOpenCloseReturnModal()}
-              className="mt-6 px-4 py-2 bg-gray-500"
-            >
+              className="w-[120px] p-1 px-2 py-2 bg-button my-1 rounded-md hover:bg-primary-hover hover:text-white"
+           >
               Return
             </button>
           </div>
@@ -164,7 +199,7 @@ const EquipmentPage = () => {
           <button
             type="button"
             onClick={() => handleOpenCloseBorrowModal()}
-            className="mt-6 px-4 py-2 bg-gray-500"
+            className="w-[120px] p-1 px-2 py-2 bg-button my-1 rounded-md hover:bg-primary-hover hover:text-white"
           >
             BORROW
           </button>
@@ -173,7 +208,7 @@ const EquipmentPage = () => {
 
       {/* HISTORY */}
 
-      <div className="border rounded-lg p-6">
+      <div className="flex flex-col border rounded-lg p-6 w-full max-w-3xl bg-white/70 gap-2 min-h-[25vh]">
         <h2 className="text-xl font-bold mb-4">Equipment History</h2>
 
         {!history || history.length === 0 ? (

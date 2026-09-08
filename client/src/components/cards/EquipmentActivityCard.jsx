@@ -1,5 +1,3 @@
-
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const EquipmentActivityCard = ({ key, equipment }) => {
@@ -9,7 +7,7 @@ const EquipmentActivityCard = ({ key, equipment }) => {
   return (
     <div key={`${equipment.id}${key}`} 
     onClick={() => navigate(`/equipment/${equipment.equipment_id}`)}
-    className="flex flex-col min-w-[270px] gap-3 p-3 pb-5 rounded-xl border-2 border-gray-700/80 overflow-hidden w-full min-h-[30vh] bg-primary shadow-2xl">
+    className="flex flex-col min-w-[270px] gap-3 p-3 pb-5 rounded-xl border-2 border-gray-700/80 overflow-hidden w-full min-h-[30vh] bg-white/70 hover:bg-white shadow-2xl">
 
       {/* Equipment Information */}
       <div className="flex flex-row w-full justify-between gap-3">

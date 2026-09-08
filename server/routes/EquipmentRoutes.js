@@ -4,9 +4,13 @@ const express = require("express");
 const authenticationMiddleware = require("../utils/authenticationMiddleware.js");
 const { getEquipment, getEquipments, createEquipment, updateEquipment, deleteEquipment, borrowEquipment, returnEquipment, getEquipmentHistory } = require("../controller/EquipmentController.js");
 const { uploadEquipmentImage } = require("../utils/uploadMiddleware.js");
+const { equipmentSearch } = require("../controller/SearchController.js");
 
 
 const router = express.Router();
+
+
+router.get("/search", authenticationMiddleware, equipmentSearch);
 
 router.get("/page/:page", authenticationMiddleware, getEquipments);
 router.get("/:id", authenticationMiddleware, getEquipment);

@@ -12,6 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { getDashBoardAction } from "../../store/actions/AuthThunks";
+import EquipmentActivityList from "../../components/cards/EquipmentActivityL`ist";
 import EquipmentActivityCard from "../../components/cards/EquipmentActivityCard";
 
 const HomePage = (props) => {
@@ -109,9 +110,22 @@ const HomePage = (props) => {
               No recent equipment found.
             </p>
           ) : (
-            <div className="grid grid-cols-1 w-full gap-4 sm:grid-cols-2 lg:flex lg:flex-row overflow-x-auto p-2">
-              {dashboard?.equipments?.map((equipment, index) => (
-                <EquipmentActivityCard key={index} equipment={equipment} />
+            <div className="flex flex-col w-full gap-1">
+              {dashboard.equipments.map((equipment) => (
+                <>
+                <span className="flex flex-col w-full lg:hidden">
+                  <EquipmentActivityCard 
+                    key={equipment.id}
+                    equipment={equipment}
+                  />
+                </span>
+                <span className="w-full hidden lg:flex gap-2">
+                <EquipmentActivityList
+                  key={equipment.id}
+                  equipment={equipment}
+                />
+                </span>
+                </>
               ))}
             </div>
           )}

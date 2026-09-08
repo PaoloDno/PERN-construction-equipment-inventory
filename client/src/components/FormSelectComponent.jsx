@@ -8,7 +8,7 @@ const SelectFormComponent = ({
   helper,
 }) => {
   return (
-    <div className="mb-4 z-40">
+    <div className="flex flex-col justify-center items-start p-2 w-full rounded-md">
       <label
         htmlFor={name}
         className="block text-gray-700 font-bold mb-2"
@@ -21,7 +21,7 @@ const SelectFormComponent = ({
         name={name}
         value={value}
         onChange={onChange}
-        className={`w-full px-3 py-2 border rounded-md outline-none ${
+        className={`w-full bg-primary/75 rounded-md text-[16px] p-2 ${
           error
             ? "border-red-500 focus:ring-red-500"
             : "border-gray-300 focus:ring-blue-500"
@@ -56,13 +56,13 @@ const SelectFormComponent = ({
       </select>
 
       {error && (
-        <p className="mt-1 text-sm text-red-500">
+        <p className="mt-1 text-[14px] text-red-500">
           {error}
         </p>
       )}
 
       {helper && !error && (
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-[14px] text-gray-500">
           {helper}
         </p>
       )}

@@ -96,16 +96,16 @@ const getProjects = async (req, res) => {
       `
     );
 
-    const totalProjects = parseInt(countResult.rows[0].total);
-    const totalPages = Math.ceil(totalProjects / limit);
-    console.log(`Total Projects: ${totalProjects}, Total Pages: ${totalPages}`);
+    const totalUnits = parseInt(countResult.rows[0].total);
+    const totalPages = Math.ceil(totalUnits / limit);
+    console.log(`Total Projects: ${totalUnits}, Total Pages: ${totalPages}`);
     console.log(`Projects Retrieved: ${result.rows.length}`);
     res.status(200).json({
       projects: result.rows,
       pagination: {
         currentPage: page,
-        projectsPerPage: limit,
-        totalProjects,
+        unitPerPage: limit,
+        totalUnits,
         totalPages,
       },
     });
@@ -119,9 +119,13 @@ const getProjects = async (req, res) => {
   }
 };
 
+
 const getProject = async (req, res) => {
   try {
-    const result = await pool.query(
+    const projectId = req.params.id;
+
+    // Get project
+    const projectResult = await pool.query(
       `
       SELECT
         p.id,
@@ -138,19 +142,82 @@ const getProject = async (req, res) => {
         ON p.created_by = u.id
       WHERE p.id = $1
       `,
-      [req.params.id]
+      [projectId]
     );
 
-    if (result.rows.length === 0) {
+    if (projectResult.rows.length === 0) {
       return res.status(404).json({
         message: "Project not found.",
       });
     }
 
-    res.json(result.rows[0]);
+    // Currently borrowed equipment
+    const activeEquipmentResult = await pool.query(
+      `
+      SELECT
+        pe.id,
+        pe.equipment_id,
+        e.equipment_name,
+        e.category,
+        pe.status,
+        pe.condition_before,
+        pe.image_before,
+        pe.borrowed_at,
+        u.username
+      FROM project_equipment pe
+      JOIN equipment e
+        ON pe.equipment_id = e.id
+      LEFT JOIN users u
+        ON pe.user_id = u.id
+      WHERE pe.project_id = $1
+        AND pe.status = 'borrowed'
+      ORDER BY pe.borrowed_at DESC
+      `,
+      [projectId]
+    );
+
+    // Returned equipment history
+    const equipmentHistoryResult = await pool.query(
+      `
+      SELECT
+        pe.id,
+        pe.equipment_id,
+        e.equipment_name,
+        e.category,
+        pe.status,
+        pe.condition_before,
+        pe.condition_after,
+        pe.image_before,
+        pe.image_after,
+        pe.borrowed_at,
+        pe.returned_at,
+        u.username
+      FROM project_equipment pe
+      JOIN equipment e
+        ON pe.equipment_id = e.id
+      LEFT JOIN users u
+        ON pe.user_id = u.id
+      WHERE pe.project_id = $1
+        AND pe.status = 'returned'
+      ORDER BY pe.returned_at DESC
+      `,
+      [projectId]
+    );
+
+    console.log("p", projectResult.rows[0]);
+    console.log("a", activeEquipmentResult.rows);
+    console.log("h", equipmentHistoryResult.rows);
+
+    res.status(200).json({
+      project: projectResult.rows[0],
+
+      activeEquipment: activeEquipmentResult.rows,
+
+      equipmentHistory: equipmentHistoryResult.rows,
+    });
 
   } catch (error) {
-    console.error(error.message);
+    console.error("Get Project Error:", error);
 
     res.status(500).json({
       message: "Server Error",
@@ -158,15 +225,18 @@ const getProject = async (req, res) => {
   }
 };
 
+
 const updateProject = async (req, res) => {
   try {
     const { id } = req.params;
+
+    console.log("body", req.body);
 
     const {
       project_name,
       description,
       location,
-      status,
+      projStatus: status,
     } = req.body;
 
     const result = await pool.query(

@@ -7,21 +7,21 @@
   --font-heading: "Mozilla Text", sans-serif;
 
 /* Primary */
-  --color-primary: #dbe7f5;
+  --color-primary: #a2c3ff;
   --color-primary-hover: #3b6ea8;
 
   /* Accent */
   --color-secondary: #d9f3ef;
-  --color-button: #4faea5;
+  --color-button: #50e0fa;
 
   /* Status */
-  --color-success: #91f0b4;
+  --color-success: #31c266;
   --color-warning: #ffb12b;
   --color-danger: #dc2626;
 
   /* Backgrounds */
   --color-background: #f8fafc;
-  --color-surface: #eaf3f8;
+  --color-surface: #c5d2e2;
 
   /* Borders */
   --color-border: #cbd5e1;
@@ -55,19 +55,19 @@
 }
 
 .var {
- --color-primary: #c3d1eb;
+ --color-primary: #a2c3ff;
   --color-primary-hover: #3773cc;
   --color-secondary: #defaf5;
 
   /* Status Colors */
-  --color-success: #91f0b4; /* Green */
+  --color-success: #31c266; /* Green */
   --color-warning: #ffb12b; /* Amber */
   --color-danger: #dc2626; /* Red */
-  --color-button: #7fc7bd; /* Red */
+  --color-button: #50e0fa; /* Red */
 
   /* Backgrounds */
   --color-background: #f8fafc;
-  --color-surface: #d2eff8;
+  --color-surface: #c5d2e2;
 
   /* Borders */
   --color-border: #4a77bb;

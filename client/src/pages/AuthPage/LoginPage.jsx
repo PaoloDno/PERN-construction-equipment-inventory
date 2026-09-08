@@ -145,7 +145,7 @@ const LoginPage = () => {
               type="submit"
               disabled={isPending}
               onClick={handleSubmit}
-              className="rounded-lg bg-primary px-5 py-3 font-semibold text-white transition hover:bg-primary-hover disabled:opacity-60"
+              className="rounded-lg bg-primary px-5 py-3 font-semibold transition hover:bg-primary-hover hover:text-white disabled:opacity-60"
             >
               {isPending ? "Logging in..." : "Login"}
             </button>
@@ -157,7 +157,7 @@ const LoginPage = () => {
           <button
             type="button"
             onClick={() => navigate("/signup")}
-            className="mt-6 flex items-center gap-2 self-start text-primary transition hover:underline"
+            className="mt-6 flex items-center gap-2 self-start transition hover:underline"
           >
             Sign Up instead
             <FaArrowAltCircleRight />

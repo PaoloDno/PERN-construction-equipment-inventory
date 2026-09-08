@@ -20,13 +20,13 @@ const AuthInputs = ({
       peer
       w-full
       h-full
-      bg-transparent
       px-2
       md:px-4
       pt-6
       pb-2
       text-text
       outline-none
+      bg-white/60
       border-2 border-white/80
       rounded-lg
     "

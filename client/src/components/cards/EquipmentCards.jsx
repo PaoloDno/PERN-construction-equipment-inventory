@@ -14,15 +14,14 @@ const EquipmentCards = ({ key, equipment }) => {
   return (
     <div
       key={`${key}${equipment.id}`}
-      className="flex flex-col border-2 w-full min-w-[240px] min-h-46 h-fit rounded-2xl p-2 border-gray-500/70 shadow-2xl
-      bg-white/80"
+      className="flex flex-col min-w-[250px] bg-white/50 gap-3 p-2 pb-3 overflow-hidden w-full min-h-[30vh] shadow-2xl rounded-2xl"
     >
-      <div className="flex flex-col w-full min-h-[40vh]">
+      <div className="flex overflow-hidden flex-col w-full min-h-[45vh] py-5 px-2 rounded-2xl bg-gradient-to-br from-cyan-400/40 to-indigo-600/65">
         {equipment.image ? (
           <img
             src={`http://localhost:5000${equipment.image}`}
             alt={equipment.equipment_name}
-            className="w-full h-[15vh] object-cover"
+            className="w-full h-[18vh] md:h-[20vh] object-cover"
           />
         ) : (
           <div className="w-full h-[15vh] flex items-center justify-center bg-gray-600">
@@ -30,7 +29,7 @@ const EquipmentCards = ({ key, equipment }) => {
           </div>
         )}
         {/** details */}
-        <div className="flex flex-col w-full h-fit text-[14px] bg-white/80 leading-none py-2">
+        <div className="flex flex-col w-full h-fit text-[14px]  leading-none py-2">
           <div className="flex flex-col gap-1">
             <h3 className="font-semibold text-gray-800 text-md">
               {equipment.equipment_name}
@@ -39,7 +38,20 @@ const EquipmentCards = ({ key, equipment }) => {
               <span className="flex items-center justify-start py-1">
                 Status:
               </span>
-              <span className="flex w-ful justify-center text-xs px-2 py-1 bg-primary-hover text-white rounded">
+
+              <span
+                className={`flex w-full justify-center text-xs px-2 py-1 ${
+                  equipment.status === "available"
+                    ? "bg-success/80 text-white"
+                    : equipment.status === "borrowed"
+                      ? "bg-primary-hover text-white"
+                      : equipment.status === "retire"
+                        ? "bg-danger text-white"
+                        : equipment.status === "maintenance"
+                          ? "bg-yellow-500 text-black"
+                          : "bg-gray-200 text-black"
+                }`}
+              >
                 {equipment.status}
               </span>
               <span className="flex items-center justify-start">
@@ -58,25 +70,40 @@ const EquipmentCards = ({ key, equipment }) => {
             </p>
             {equipment.project_name ? (
               <div
-                className="p-2 grid grid-cols-2 h-[8vh]
-             w-full  bg-surface border-2 overflow-hidden
-             border-gray-500 rounded-sm"
+                className="p-2 grid grid-cols-2 h-[8vh] pb-4
+                  w-full  bg-surface/60 border-2 overflow-hidden
+                  border-gray-500 rounded-sm"
               >
                 <span>project:</span>{" "}
                 <span>
                   {equipment.project_name}-{equipment.location}
                 </span>
-                <span>p-status:</span> <span>{equipment.project_status}</span>
+                <span>p-status:</span> <span
+                className={`flex w-full justify-center text-xs px-2 py-1 ${
+                  equipment.project_status === "planning"
+                    ? "bg-gray-300 text-black"
+                    : equipment.project_status === "active"
+                      ? "bg-green-500 text-black"
+                      : equipment.project_status === "completed"
+                        ? "bg-blue-500 text-white"
+                        : equipment.project_status === "onhold"
+                          ? "bg-yellow-500 text-black"
+                          : "bg-gray-200 text-black"
+                }`}
+              >
+                {equipment.project_status}
+              </span>
               </div>
             ) : (
               <div
                 className="p-1 flex flex-col justify-start items-center w-full h-[8vh] bg-surface border-2
-             border-gray-500 rounded-sm overflow-hidden"
+               border-gray-500 rounded-sm overflow-hidden"
               >
                 <span>Equipment is avaible:</span>
-                <button 
-                onClick={() => handleOpenCloseBorrowModal()}
-                className="w-2/3 p-1 px-2 py-2 bg-button my-1 rounded-3xl hover:bg-primary-hover hover:text-white">
+                <button
+                  onClick={() => handleOpenCloseBorrowModal()}
+                  className="w-[120px] p-1 px-2 py-2 bg-button my-1 rounded-md hover:bg-primary-hover hover:text-white"
+                >
                   Borrow
                 </button>
               </div>

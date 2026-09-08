@@ -9,7 +9,7 @@ const ReturnedEquipmentModal = ({ equipment, onClose }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log("sadasdas")
+  console.log("sadasdas");
 
   const { token } = useSelector((state) => state.auth);
 
@@ -132,7 +132,6 @@ const ReturnedEquipmentModal = ({ equipment, onClose }) => {
       return;
     }
 
-
     // Add authenticated user
     const submitData = {
       ...formData,
@@ -140,149 +139,170 @@ const ReturnedEquipmentModal = ({ equipment, onClose }) => {
       id: equipment.id,
     };
 
-
     setFormError({});
     if (validateInputs()) {
       try {
         console.log("ASdasdas");
 
-        const resultAction = await dispatch(returnEquipmentAction(submitData))
+        const resultAction = await dispatch(returnEquipmentAction(submitData));
 
-        if (
-                returnEquipmentAction.fulfilled.match(
-                  resultAction
-                )
-              ) {
-                console.log(
-                  "Equipment borrowed successfully"
-                );
-                // Close modal after success
-                onClose();
-        
-                // Optional: go back to equipment page
-                // navigate(`/equipment/${equipment.id}`);
-        
-              } else {
-        
-                setFormError({
-                  submit:
-                    resultAction.payload ||
-                    "Failed to borrow equipment.",
-                });
-              }
+        if (returnEquipmentAction.fulfilled.match(resultAction)) {
+          console.log("Equipment borrowed successfully");
+          // Close modal after success
+          onClose();
 
+          // Optional: go back to equipment page
+          // navigate(`/equipment/${equipment.id}`);
+        } else {
+          setFormError({
+            submit: resultAction.payload || "Failed to borrow equipment.",
+          });
+        }
       } catch (error) {
-        
-      console.error(
-        "Borrow equipment error:",
-        error
-      );
+        console.error("Borrow equipment error:", error);
 
-      setFormError({
-        submit:
-          "Something went wrong while borrowing equipment.",
-      });
+        setFormError({
+          submit: "Something went wrong while borrowing equipment.",
+        });
       } finally {
-        navigate(`/equipment/${submitData.id}`)
+        navigate(`/equipment/${submitData.id}`);
       }
     }
-  }
-    return (
-      <div className="fixed inset-0 z-40 bg-black/40 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-auto">
-          <div
-            className="
+  };
+  return (
+    <div className="fixed inset-0 z-40 bg-black/60 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl p-4 py-4 w-full max-w-lg max-h-[90vh] overflow-auto">
+        <div
+          className="
             flex
+            w-full
             justify-between
             items-center
-            mb-6
+            mb-6 p-2 px-4
           "
-          >
-            <div>
-              <h2 className="text-xl font-bold">Borrow Equipment</h2>
+        >
+          <div>
+            <h2 className="text-xl font-bold">Return Equipment</h2>
 
-              <p className="text-sm text-gray-500">
-                {equipment?.equipment_name}
-              </p>
+            <p className="text-sm text-gray-500">{equipment?.equipment_name}</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="
+              text-gray-700
+              hover:text-gray-800
+              text-xl
+              w-10 h-10
+              bg-warning/60 rounded-full
+              hover:bg-gray-400
+            "
+          >
+            X
+          </button>
+        </div>
+
+        <form className="py-4 px-2 flex gap-2 w-full flex-col min-h-[70vh]  bg-primary-hover/15 rounded-2xl shadow-2xl">
+          <p className="text-[18px] text-gray-500">
+            Fill out the return request form.
+          </p>
+
+          <SelectFormComponent
+            label="Condition"
+            name="condition"
+            value={formData.condition}
+            values={["excellent", "good", "fair", "poor"]}
+            onChange={handleChange}
+            error={formError.condition}
+            helper=""
+          />
+
+          {/* Image Upload */}
+          <div className="mb-4">
+            <label
+              htmlFor="image"
+              className="block text-gray-700 font-bold mb-2"
+            >
+              Equipment Image
+            </label>
+
+            <input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+
+            {formError.image && (
+              <p className="mt-1 text-sm text-red-500">{formError.image}</p>
+            )}
+          </div>
+
+          {/* Image Preview */}
+            <div className="mb-6">
+              <p className="text-gray-700 font-bold mb-2">Image Preview</p>
+
+          {formData.image ? (
+              <img
+                src={URL.createObjectURL(formData.image)}
+                alt="Equipment preview"
+                className="h-48 w-full object-cover rounded-md border"
+              />
+          ): (
+            <div className="flex w-full h-48 items-center justify-center border-2 border-black">
+              No Image
+            </div>
+          )}
             </div>
 
+          <div
+            className="
+              flex
+              justify-end
+              gap-3
+              pt-4
+              mt-auto
+              w-full
+            "
+          >
             <button
               type="button"
               onClick={onClose}
               className="
-              text-gray-500
-              hover:text-gray-800
-              text-xl
-              w-10 h-10
-            "
+                px-4
+                py-2
+                border
+                bg-white
+                min-w-[120px]
+                border-gray-300
+                rounded-md
+                hover:bg-gray-100
+              "
             >
-              ×
+              Cancel
             </button>
-          </div>
-
-          <form className="">
-            <p className="text-sm text-gray-500">
-              Fill out the return request form.
-            </p>
-
-            <SelectFormComponent
-              label="Condition"
-              name="condition"
-              value={formData.condition}
-              values={["excellent", "good", "fair", "poor"]}
-              onChange={handleChange}
-              error={formError.condition}
-              helper=""
-            />
-
-            {/* Image Upload */}
-            <div className="mb-4">
-              <label
-                htmlFor="image"
-                className="block text-gray-700 font-bold mb-2"
-              >
-                Equipment Image
-              </label>
-
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-
-              {formError.image && (
-                <p className="mt-1 text-sm text-red-500">{formError.image}</p>
-              )}
-            </div>
-
-            {/* Image Preview */}
-            {formData.image && (
-              <div className="mb-6">
-                <p className="text-gray-700 font-bold mb-2">Image Preview</p>
-
-                <img
-                  src={URL.createObjectURL(formData.image)}
-                  alt="Equipment preview"
-                  className="h-48 w-full object-cover rounded-md border"
-                />
-              </div>
-            )}
-
             <button
               type="submit"
               onClick={handleSubmit}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-            >
+              className="
+                px-4
+                py-2
+                bg-gray-800
+                text-white
+                rounded-md
+                hover:bg-gray-700
+              "
+              >
               Return Equipment
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
-    );
-  };
-
+    </div>
+  );
+};
 
 export default ReturnedEquipmentModal;

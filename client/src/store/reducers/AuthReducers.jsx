@@ -4,6 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   getDashBoardAction,
   getProfileAction,
+  getProfilesAction,
   loginAction,
   registerAction,
 } from "../actions/AuthThunks";
@@ -12,6 +13,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
+    profiles: null,
     dashboard: null,
     token: localStorage.getItem("token"),
     isPending: false,
@@ -27,7 +29,7 @@ const authSlice = createSlice({
     setThemeInProfile: (state, action) => {
       if (state.user) {
         state.user.theme = action.payload || "light";
-      }
+      } // soon
     },
   },
   extraReducers: (builder) => {
@@ -57,16 +59,24 @@ const authSlice = createSlice({
         state.isPending = false;
         state.isRejected = false;
       })
+      .addCase(getProfilesAction.fulfilled, (state, action) => {
+        state.profiles = action.payload.profiles;
+        state.pagination = action.payload.pagination;
+        state.isPending = false;
+        state.isRejected = false;
+      })
+      
       .addMatcher(
-        isPending(loginAction, registerAction, getProfileAction, getDashBoardAction),
+        isPending(loginAction, registerAction, getProfileAction, getDashBoardAction, getProfilesAction),
         (state) => {
           state.isPending = true;
           state.isRejected = false;
           state.error = null;
         },
       )
+      
       .addMatcher(
-        isRejected(loginAction, registerAction, getProfileAction, getDashBoardAction),
+        isRejected(loginAction, registerAction, getProfileAction, getDashBoardAction, getProfilesAction),
         (state, action) => {
           state.isPending = false;
           state.isRejected = true;

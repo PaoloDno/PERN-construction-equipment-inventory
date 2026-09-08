@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api";
 
-
 export const createProjectAction = createAsyncThunk(
   "CreateProjectAction",
   async (projectData, thunkAPI) => {
@@ -28,15 +27,14 @@ export const createProjectAction = createAsyncThunk(
       console.log("Project Created:", response);
 
       return response;
-
     } catch (error) {
       console.log(error);
 
       return thunkAPI.rejectWithValue(
-        error.message || "Failed to create project"
+        error.message || "Failed to create project",
       );
     }
-  }
+  },
 );
 
 export const getProjectAction = createAsyncThunk(
@@ -73,14 +71,12 @@ export const getProjectsAction = createAsyncThunk(
       console.log(response);
 
       return response;
-
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error?.message ||
-        "Failed to get projects"
+        error?.message || "Failed to get projects",
       );
     }
-  }
+  },
 );
 
 export const updateProjectAction = createAsyncThunk(
@@ -88,16 +84,21 @@ export const updateProjectAction = createAsyncThunk(
   async (projectData, thunkAPI) => {
     try {
       console.log("Update Project");
-      const response = await api('/project/update', {
-        method: 'POST',
+
+      const token = thunkAPI.getState().auth.token;
+      console.log(projectData);
+      
+      const response = await api(`/project/update/${projectData.id}`, {
+        method: "PUT",
         body: projectData,
+        token,
       });
       console.log(response);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const searchNameProjectAction = createAsyncThunk(
@@ -105,18 +106,60 @@ export const searchNameProjectAction = createAsyncThunk(
   async (search, thunkAPI) => {
     try {
       const { token } = thunkAPI.getState().auth;
-      const response = await api(`/project/search?search=${encodeURIComponent(search)}`,
-      {
-        method: "GET",
-        token,   
-      }
-    );
+      const response = await api(
+        `/project/search?search=${encodeURIComponent(search)}`,
+        {
+          method: "GET",
+          token,
+        },
+      );
 
-    console.log(response);
-    return response;
+      console.log(response);
+      return response;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.message);
+    }
+  },
+);
+
+
+export const getSearchProjectsAction = createAsyncThunk(
+  "GetSearchProjectAction",
+  async (
+    {
+      page = 1,
+      search = "",
+      status = "",
+      location = "",
+    }, 
+    thunkAPI
+  ) => {
+    try {
+      const token = thunkAPI.getState().auth.token;
+
+      const params = new URLSearchParams({
+        page: String(page),
+        search,
+        status,
+        location,
+      });
+      const response = await api(
+        `/project/search/pages?${params.toString()}`,
+        {
+          method: "GET",
+          token,
+        }
+      );
+
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(response);
+
+      return thunkAPI.rejectWithValue(
+        error.message
+      )
     }
   }
 )

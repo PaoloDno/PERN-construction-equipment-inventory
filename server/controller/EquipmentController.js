@@ -8,6 +8,7 @@ const getEquipments = async (req, res) => {
     const page = Math.max(parseInt(req.params.page) || 1, 1);
 
     console.log(`Current Page: ${page}`);
+
     const limit = 10;
     const offset = (page - 1) * limit;
 
@@ -21,13 +22,32 @@ const getEquipments = async (req, res) => {
         e.status,
         e.note,
         e.image,
+        e.created_at,
+
         u.username,
-        u.company_id
+        u.company_id,
+
+        p.id AS project_id,
+        p.project_name,
+        p.location,
+        p.status AS project_status
+
       FROM equipment e
+
       JOIN users u
         ON e.created_by = u.id
+
+      LEFT JOIN project_equipment pe
+        ON e.id = pe.equipment_id
+        AND pe.returned_at IS NULL
+
+      LEFT JOIN projects p
+        ON pe.project_id = p.id
+
       ORDER BY e.created_at DESC
-      LIMIT $1 OFFSET $2
+
+      LIMIT $1
+      OFFSET $2
       `,
       [limit, offset],
     );
@@ -39,19 +59,21 @@ const getEquipments = async (req, res) => {
       `,
     );
 
-    const totalEquipments = parseInt(countResult.rows[0].total);
-    const totalPages = Math.ceil(totalEquipments / limit);
+    const totalUnits = parseInt(countResult.rows[0].total);
+    const totalPages = Math.ceil(totalUnits / limit);
+
     console.log(
-      `Total Equipments: ${totalEquipments}, Total Pages: ${totalPages}`,
+      `Total Equipments: ${totalUnits}, Total Pages: ${totalPages}`,
     );
+
     console.log(`Equipments Retrieved: ${result.rows.length}`);
 
     res.status(200).json({
       equipments: result.rows,
       pagination: {
         currentPage: page,
-        equipmentsPerPage: limit,
-        totalEquipments,
+        unitsPerPage: limit,
+        totalUnits,
         totalPages,
       },
     });
@@ -250,7 +272,7 @@ const borrowEquipment = async (req, res) => {
       });
     }
 
-    const imageBefore = `/uploads/equipment/${req.file.filename}`;
+    const imageBefore = `/uploads/equipments/${req.file.filename}`;
 
     // Create project_equipment
     const assignmentResult = await client.query(
@@ -314,6 +336,8 @@ const returnEquipment = async (req, res) => {
     const { id } = req.params;
     const { condition } = req.body;
 
+    console.log("Return Equipment Request Params:", req.params);
+
     if (!req.file) {
       return res.status(400).json({
         message: "After image is required",
@@ -358,6 +382,8 @@ const returnEquipment = async (req, res) => {
       });
     }
 
+
+
     // Find its active project_equipment row
     const assignmentResult = await client.query(
       `
@@ -392,6 +418,7 @@ const returnEquipment = async (req, res) => {
       SET
         condition_after = $1,
         image_after = $2,
+        status = 'returned',
         returned_at = NOW()
       WHERE id = $3
       RETURNING *

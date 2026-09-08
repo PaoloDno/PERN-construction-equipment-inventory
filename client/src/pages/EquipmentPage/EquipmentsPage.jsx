@@ -108,7 +108,7 @@ const EquipmentsPage = (props) => {
                   className="
                     hidden lg:flex
                     items-center justify-center
-                    px-2
+                    px-2 text-black
                     min-w-[120px]
                     rounded-md
                     bg-button
@@ -123,7 +123,7 @@ const EquipmentsPage = (props) => {
               </div>
 
               {/* Search */}
-              <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-auto">
+              <div className="grid grid-cols-3 md:flex md:flex-row gap-2 w-full lg:w-auto">
                 {/* Search */}
                 <input
                   type="text"
@@ -137,7 +137,7 @@ const EquipmentsPage = (props) => {
                   placeholder="Search equipment..."
                   className="
                   w-full lg:w-64
-                  px-4 py-2
+                  px-4 py-2 col-span-3
                   rounded-md
                   bg-white
                   text-gray-800
@@ -159,7 +159,7 @@ const EquipmentsPage = (props) => {
                   className="
                     px-3 py-2
                     rounded-md
-                    bg-white
+                    bg-white text-black
                     text-gray-800
                     border-2 border-gray-300
                     outline-none
@@ -209,23 +209,34 @@ const EquipmentsPage = (props) => {
                     );
                   }}
                   className="
-      px-5 py-2
-      rounded-md
-      bg-button
-      border-2 border-white/30
-      hover:bg-primary-hover
-      hover:text-white
-      transition
-    "
+                    px-5 py-2
+                    rounded-md
+                    bg-button text-black
+                    border-2 border-white/30
+                    hover:bg-primary-hover
+                    hover:text-white
+                    transition
+                  "
                 >
                   Search
                 </button>
               </div>
             </div>
+            <p className="flex justify-start text-sm">
+              {pagination.totalUnits} projects
+              {searchFilters.search
+                ? ` with "${searchFilters.search}" name or location`
+                : ""}
+              {searchFilters.location
+                ? ` with "${searchFilters.condition}" specific location`
+                : ""}
+              {searchFilters.status
+                ? ` with "${searchFilters.status.toUpperCase()}" status`
+                : ""}
+            </p>
 
             <div className="flex w-full items-center justify-between mt-2">
-              <p className="text-sm">{pagination.totalEquipments} equipments</p>
-
+              
               <PaginationComponent
                 pagination={pagination}
                 handlePageChange={handlePageChange}
@@ -234,13 +245,13 @@ const EquipmentsPage = (props) => {
           </div>
           <div>
             {equipments.length === 0 ? (
-              <div>
+              <div className="p-2 min-h-screen bg-primary/80 flex justify-center items-center w-full">
                 <p className="text-gray-500">No Equipments found.</p>
               </div>
             ) : (
               <>
                 {/* Mobile / tablet — always cards */}
-                <div className="lg:hidden grid grid-cols-1 gap-2 p-2">
+                <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-2 p-2 min-h-screen bg-surface">
                   {equipments.map((equipment) => (
                     <EquipmentCards key={equipment.id} equipment={equipment} />
                   ))}

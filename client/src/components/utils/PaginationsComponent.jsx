@@ -10,9 +10,11 @@ const PaginationComponent = ({
     const {
     currentPage,
     totalPages,
+    totalUnits,
   } = pagination;
 
     return (
+      <>
     <div className="flex w-full bg-primary-hover justify-center items-center gap-2 mt-8">
 
       {/* Previous */}
@@ -77,6 +79,11 @@ const PaginationComponent = ({
       </button>
 
     </div>
+    <div className="w-full flex flex-col p-2 gap-1 items-center justify-center">
+      <p>currently page {currentPage} of {totalPages}</p>
+      <p>with total of {totalPages}</p>
+    </div> 
+    </>
   );
 };
 

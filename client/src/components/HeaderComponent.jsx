@@ -69,8 +69,8 @@ const HeaderComponent = () => {
             <Link
               key={to}
               to={to}
-              className="flex flex-row w-42 border-2 border-white/5 h-10 hover:bg-primary-hover bg-white/15 gap-2
-              justify-center items-center hover:text-text-hover rounded-md p-2 transition-all duration-700
+              className="flex flex-row w-42 border-2 border-white/5 h-10 hover:bg-primary-hover hover:text-white bg-white/15 gap-2
+              justify-center items-center  rounded-md p-2 transition-all duration-700
             "
             >
               <span>{icon}</span>

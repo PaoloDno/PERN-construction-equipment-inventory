@@ -187,7 +187,7 @@ const SignupPage = () => {
               type="submit"
               disabled={isPending}
               onClick={handleSubmit}
-              className="rounded-lg bg-primary py-3 text-white font-semibold transition hover:bg-primary-hover disabled:opacity-60"
+              className="rounded-lg bg-primary py-3 hover:text-white font-semibold transition hover:bg-primary-hover disabled:opacity-60"
             >
               {isPending ? "Creating Account..." : "Create Account"}
             </button>
@@ -196,7 +196,7 @@ const SignupPage = () => {
           <button
             type="button"
             onClick={() => navigate("/login")}
-            className="mt-6 flex items-center gap-2 text-primary hover:underline"
+            className="mt-6 flex items-center gap-2 hover:underline"
           >
             <FaArrowAltCircleLeft />
             Already have an account? Login

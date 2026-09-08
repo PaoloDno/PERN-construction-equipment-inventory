@@ -15,20 +15,29 @@ const EquipmentCardList = ({ equipment }) => {
     <>
       <div
         className="
-          flex flex-row
-          items-center
-          w-full
-          min-h-[100px]
-          p-3
-          gap-4
-          border-b-2 border-gray-300
-          bg-white/80
-          hover:bg-gray-100
-          transition
+        flex flex-row
+        items-center
+        w-full
+        min-h-[110px]
+        p-3
+        gap-4
+        border-b-2
+        border-gray-700/30
+        bg-white/70
+        hover:bg-primary-hover/20
+        cursor-pointer
+        transition
         "
       >
         {/* Image */}
-        <div className="w-24 h-20 shrink-0 rounded-lg overflow-hidden">
+        <div className="
+          w-24 h-20
+          shrink-0
+          overflow-hidden
+          rounded-md
+          bg-black/10
+          flex items-center justify-center
+        ">
           {equipment.image ? (
             <img
               src={`http://localhost:5000${equipment.image}`}
@@ -38,14 +47,14 @@ const EquipmentCardList = ({ equipment }) => {
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-600">
               <span className="text-gray-400 text-xs">
-                No Image
+                Image not found
               </span>
             </div>
           )}
         </div>
 
         {/* Equipment Name */}
-        <div className="flex flex-col w-1/4 min-w-0">
+        <div className="w-1/5 min-w-0">
           <h3 className="font-semibold text-gray-800 truncate">
             {equipment.equipment_name}
           </h3>
@@ -57,14 +66,14 @@ const EquipmentCardList = ({ equipment }) => {
 
         {/* Status */}
         <div className="w-32">
-          <span className="text-xs px-3 py-1 bg-primary-hover text-white rounded">
+          <span className="flex justify-center items-center text-xs px-3 py-1 bg-primary-hover text-white rounded w-[80px]">
             {equipment.status}
           </span>
         </div>
 
         {/* Condition */}
         <div className="w-32">
-          <span className="text-xs px-3 py-1 bg-primary-hover text-white rounded">
+          <span className="flex justify-center items-center text-xs px-3 py-1 bg-primary-hover text-white rounded w-[80px]">
             {equipment.condition}
           </span>
         </div>
@@ -106,6 +115,8 @@ const EquipmentCardList = ({ equipment }) => {
                 text-sm
                 hover:bg-primary-hover
                 hover:text-white
+              flex w-[80px]
+              justify-center items-center
               "
             >
               Borrow
@@ -123,6 +134,8 @@ const EquipmentCardList = ({ equipment }) => {
               text-sm
               hover:bg-primary-hover
               hover:text-white
+              flex w-[80px]
+              justify-center items-center
             "
           >
             View

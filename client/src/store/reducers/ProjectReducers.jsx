@@ -3,6 +3,7 @@ import {
   createProjectAction,
   getProjectAction,
   getProjectsAction,
+  getSearchProjectsAction,
   searchNameProjectAction,
   updateProjectAction,
 } from "../actions/ProjectThunks";
@@ -17,10 +18,6 @@ const projectSlice = createSlice({
     projects: [],
     projectsName: [],
     pagination: {
-      currentPage: 1,
-      projectsPerPage: 10,
-      totalProjects: 0,
-      totalPages: 0,
     },
     isPending: false,
     isRejected: false,
@@ -57,6 +54,11 @@ const projectSlice = createSlice({
         state.projectsName = action.payload.projectsName;
         state.isPending = false;
         state.isRejected = false;
+      })
+      .addCase(getSearchProjectsAction.fulfilled, (state, action) => {
+        state.isPending = false;
+        state.isRejected = false;
+        state.projects = action.payload.projects;
       })
       .addMatcher(
         isPending(

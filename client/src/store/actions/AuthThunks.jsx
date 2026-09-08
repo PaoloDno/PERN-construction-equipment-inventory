@@ -52,6 +52,44 @@ export const getProfileAction = createAsyncThunk(
   },
 );
 
+export const getProfilesAction = createAsyncThunk(
+  "AuthGetProfiles",
+  async({
+    page = 1,
+    search = "",
+    role = "",
+  },
+  thunkAPI
+) => {
+
+  try{
+    const token = thunkAPI.getState().auth.token;
+
+    const params = new URLSearchParams({
+      page: String(page),
+      search,
+      role,
+    });
+
+    const response = await api(
+      `/auth/search/pages?${params.toString()}`,
+      {
+        method: "GET",
+        token
+      }
+    );
+
+    return response;
+  }
+   catch (error) {
+    console.log(error)
+    return thunkAPI.rejectWithValue(
+        error.message
+      );
+   }
+}
+);
+
 
 export const getDashBoardAction = createAsyncThunk(
   "GetDashboardAction",
