@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { createProjectAction } from "../../store/actions/ProjectThunks";
 import InputFormComponent from "../../components/FormInputComponent";
 import SelectFormComponent from "../../components/FormSelectComponent";
+import { FaBackward } from "react-icons/fa";
 
 const AddProjectPage = () => {
   const dispatch = useDispatch();
@@ -153,87 +154,114 @@ const AddProjectPage = () => {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen">
-      <div className="flex flex-col">ADD a PROJECT</div>
-      <div className="">
-        <form onSubmit={handleSubmit}>
-          <InputFormComponent
-            label="Project Name"
-            type="text"
-            name="project_name"
-            value={formData.project_name}
-            onChange={handleChange}
-            error={formError.project_name}
-            helper=""
-          />
-          <InputFormComponent
-            label="Description"
-            type="text"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            error={formError.description}
-            helper=""
-          />
-          <InputFormComponent
-            label="Location"
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            error={formError.location}
-            helper=""
-          />
-          <SelectFormComponent
-            label="Status"
-            name="status"
-            value={formData.status}
-            values={["planning", "active", "completed", "onhold", "cancelled"]}
-            onChange={handleChange}
-            error={formError.status}
-            helper=""
-          />
-          {/* Image Upload */}
-          <div className="mb-4">
+    <div className="flex flex-col w-full min-h-screen p-6 gap-6 items-center justify-center">
+      <div className="fixed inset-0 -z-10 min-h-screen w-full bg-gradient-to-br from-blue-300/80 via-indigo-500 to-purple-600 opacity-70" />
+
+      <button
+        onClick={() => navigate("/projects")}
+        className="flex hover:underline flex-row text-md lg:text-2xl text-white items-center gap-2 h-[10vh] lg:h-[12vh] bg-primary-hover/70 w-full max-w-3xl justify-between md:justify-start px-4"
+      >
+        <FaBackward size={24} />
+        <span>Go back to Projects Page</span>
+      </button>
+
+      <div className="flex flex-col border border-gray-700/80 rounded-lg p-6 w-full max-w-3xl bg-white/70 gap-2">
+        <div className=" text-md lg:text-2xl">ADD a PROJECT</div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          <span>
             <label
               htmlFor="image"
               className="block text-gray-700 font-bold mb-2"
             >
-              Equipment Image
+              Project Image
             </label>
 
-            <input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            <span className="flex flex-col-reverse gap-1 md:grid md:grid-cols-2">
+              <div className="flex flex-row mb-4 items-start justify-start">
+                <input
+                  id="image"
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="px-3 py-1  rounded-md border-2 border-black bg-gray-400/40"
+                />
+
+                {formError.image && (
+                  <p className="mt-1 text-sm text-red-500">{formError.image}</p>
+                )}
+              </div>
+              {/* Image Preview */}
+              <div className="flex mx-auto h-48 w-48 border-2 border-black/40 items-center justify-center">
+                {formData.image ? (
+                  <img
+                    src={URL.createObjectURL(formData.image)}
+                    alt="Equipment preview"
+                    className="h-48 w-full object-cover rounded-md border"
+                  />
+                ) : (
+                  <p className="text-gray-700 font-bold mb-2">Image Preview</p>
+                )}
+              </div>
+            </span>
+          </span>
+          <h3>Project Details</h3>
+          <span className="flex flex-col md:grid md:grid-cols-2 gap-2">
+            <InputFormComponent
+              label="Project Name"
+              type="text"
+              name="project_name"
+              value={formData.project_name}
+              onChange={handleChange}
+              error={formError.project_name}
+              helper=""
             />
-
-            {formError.image && (
-              <p className="mt-1 text-sm text-red-500">{formError.image}</p>
-            )}
-          </div>
-          {/* Image Preview */}
-          {formData.image && (
-            <div className="mb-6">
-              <p className="text-gray-700 font-bold mb-2">Image Preview</p>
-
-              <img
-                src={URL.createObjectURL(formData.image)}
-                alt="Equipment preview"
-                className="h-48 w-full object-cover rounded-md border"
-              />
-            </div>
-          )}
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-          >
-            Add Equipment
-          </button>
+            <InputFormComponent
+              label="Description"
+              type="text"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              error={formError.description}
+              helper=""
+            />
+            <InputFormComponent
+              label="Location"
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              error={formError.location}
+              helper=""
+            />
+          </span>
+          <span className="my-4 w-full lg:w-1/2 gap-2">
+            <SelectFormComponent
+              label="Status"
+              name="status"
+              value={formData.status}
+              values={[
+                "planning",
+                "active",
+                "completed",
+                "onhold",
+                "cancelled",
+              ]}
+              onChange={handleChange}
+              error={formError.status}
+              helper=""
+            />
+          </span>
+          {/* Image Upload */}
+          <span className="flex w-full items-center justify-center mt-8">
+            {/* Submit */}
+            <button
+              type="submit"
+              className="min-w-[120px] w-fit  bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+            >
+              Add Project
+            </button>
+          </span>
         </form>
       </div>
     </div>

@@ -100,15 +100,16 @@ const ProjectsPage = () => {
 
       {/* Projects */}
       {!isPending && !isRejected && (
-        <div className="flex flex-col w-full p-4 bg-primary">
+        <div className="flex flex-col w-full bg-primary min-h-screen">
           <div className="flex text-white flex-col w-full justify-start items-start p-2 bg-primary-hover">
             <div className="flex flex-col lg:flex-row w-full gap-3 lg:items-center lg:justify-between">
               {/** Title + View Toggle */}
-              <h2 className="text-lg font-medium">Project List</h2>
+              <span className="flex flex-row gap-2">
+                <h2 className="text-lg font-medium">Project List</h2>
 
-              <button
-                onClick={() => setViewCardMode((prev) => !prev)}
-                className="
+                <button
+                  onClick={() => setViewCardMode((prev) => !prev)}
+                  className="
                     hidden lg:flex
                     items-center justify-center
                     px-2 text-black
@@ -120,10 +121,10 @@ const ProjectsPage = () => {
                     border-2
                     text-sm
                   "
-              >
-                {viewCardMode ? "List" : "Cards"}
-              </button>
-
+                >
+                  {viewCardMode ? "List" : "Cards"}
+                </button>
+              </span>
               {/** Search */}
 
               <div className="grid grid-cols-3 md:flex md:flex-row gap-2 w-full lg:w-auto">

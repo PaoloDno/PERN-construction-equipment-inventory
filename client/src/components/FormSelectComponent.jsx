@@ -8,7 +8,7 @@ const SelectFormComponent = ({
   helper,
 }) => {
   return (
-    <div className="flex flex-col justify-center items-start p-2 w-full rounded-md">
+    <div className="flex flex-col justify-center items-start p-2 w-full rounded-md bg-primary/30">
       <label
         htmlFor={name}
         className="block text-gray-700 font-bold mb-2"

@@ -103,8 +103,8 @@ const HeaderComponent = () => {
                 animate-[slideIn_0.75s_ease-out]
               "
             >
-              <div className="flex justify-end p-4">
-                <button onClick={() => setMobileNav(false)}>
+              <div className="flex justify-end p-4 ">
+                <button onClick={() => setMobileNav(false)} className="bg-warning p-2 rounded-full">
                   <FaTimes size={24} />
                 </button>
               </div>

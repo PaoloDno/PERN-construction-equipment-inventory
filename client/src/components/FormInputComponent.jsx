@@ -11,7 +11,7 @@ const InputFormComponent = (
 ) => {
   return (
     <div className="flex flex-col justify-center items-start p-2 w-full" >
-      <div className="relative w-full bg-primary/75 rounded-md text-[1rem] p-1">
+      <div className="relative w-full bg-primary/75 rounded-md p-1">
         <input
           type={type}
           name={name}
@@ -44,15 +44,15 @@ const InputFormComponent = (
           pointer-events-none
 
           peer-placeholder-shown:top-1/2
-          peer-placeholder-shown:text-2xl
+          peer-placeholder-shown:text-[18px]
           peer-placeholder-shown:-translate-y-1/2
 
-          peer-focus:top-2
-          peer-focus:text-sm
+          peer-focus:-top-1
+          peer-focus:text-[14px]
           peer-focus:translate-y-0
 
-          peer-not-placeholder-shown:top-2
-          peer-not-placeholder-shown:text-[16px]
+          peer-not-placeholder-shown:top-0
+          peer-not-placeholder-shown:text-[14px]
           peer-not-placeholder-shown:translate-y-0
         "
         >

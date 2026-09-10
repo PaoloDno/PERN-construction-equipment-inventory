@@ -6,6 +6,7 @@ import InputFormComponent from "../../components/FormInputComponent.jsx";
 import SelectFormComponent from "../../components/FormSelectComponent.jsx";
 import { sanitizeInput } from "../../components/utils/SanitizeInput.jsx";
 import { createEquipmentAction } from "../../store/actions/EquipmentThunks.jsx";
+import { FaBackward } from "react-icons/fa";
 
 const AddEquipmentPage = () => {
   const dispatch = useDispatch();
@@ -148,117 +149,140 @@ const AddEquipmentPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Add Equipment</h1>
+    <div className="flex flex-col w-full min-h-screen p-6 gap-6 items-center justify-center">
+      <div className="fixed inset-0 -z-10 min-h-screen w-full bg-gradient-to-br from-blue-300/80 via-indigo-500 to-purple-600 opacity-70" />
 
-      <form onSubmit={handleSubmit}>
-        {/* Equipment Name */}
-        <InputFormComponent
-          label="Equipment Name"
-          type="text"
-          name="equipment_name"
-          value={formData.equipment_name}
-          onChange={handleChange}
-          error={formError.equipment_name}
-          helper=""
-        />
+      <button
+        onClick={() => navigate("/equipments")}
+        className="flex hover:underline flex-row text-md lg:text-2xl text-white items-center gap-2 h-[10vh] lg:h-[12vh] bg-primary-hover/70 w-full max-w-3xl justify-between md:justify-start px-4"
+      >
+        <FaBackward size={24} />
+        <span>Go back to Projects Page</span>
+      </button>
 
-        {/* Category */}
-        <SelectFormComponent
-          label="Category"
-          name="category"
-          value={formData.category}
-          values={["Heavy Equipment", "Power Tools", "Hand Tools"]}
-          onChange={handleChange}
-          error={formError.category}
-          helper=""
-        />
+      <div className="flex flex-col border border-gray-700/80 rounded-lg p-6 w-full max-w-3xl bg-white/70 gap-2">
+        <div className=" text-md lg:text-2xl">ADD an Equipment</div>
 
-        {/* Serial Number */}
-        <InputFormComponent
-          label="Serial Number"
-          type="text"
-          name="serial_number"
-          value={formData.serial_number}
-          onChange={handleChange}
-          error={formError.serial_number}
-          helper=""
-        />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          <span>
+            <label
+              htmlFor="image"
+              className="block text-gray-700 font-bold mb-2"
+            >
+              Project Image
+            </label>
 
-        {/* Condition */}
-        <SelectFormComponent
-          label="Condition"
-          name="condition"
-          value={formData.condition}
-          values={["excellent", "good", "fair", "poor"]}
-          onChange={handleChange}
-          error={formError.condition}
-          helper=""
-        />
+            <span className="flex flex-col-reverse gap-1 md:grid md:grid-cols-2">
+              <div className="flex flex-row mb-4 items-start justify-start">
+                <input
+                  id="image"
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="px-3 py-1  rounded-md border-2 border-black bg-gray-400/40"
+                />
 
-        {/* Note */}
-        <InputFormComponent
-          label="Note"
-          type="text"
-          name="note"
-          value={formData.note}
-          onChange={handleChange}
-          error={formError.note}
-          helper=""
-        />
+                {formError.image && (
+                  <p className="mt-1 text-sm text-red-500">{formError.image}</p>
+                )}
+              </div>
+              {/* Image Preview */}
+              <div className="flex mx-auto h-48 w-48 border-2 border-black/40 items-center justify-center">
+                {formData.image ? (
+                  <img
+                    src={URL.createObjectURL(formData.image)}
+                    alt="Equipment preview"
+                    className="h-48 w-full object-cover rounded-md border"
+                  />
+                ) : (
+                  <p className="text-gray-700 font-bold mb-2">Image Preview</p>
+                )}
+              </div>
+            </span>
+          </span>
+          <h3>Project Details</h3>
 
-        {/* Status */}
-        <SelectFormComponent
-          label="Status"
-          name="status"
-          value={formData.status}
-          values={["available", "borrowed", "maintenance", "retire"]}
-          onChange={handleChange}
-          error={formError.status}
-          helper=""
-        />
-
-        {/* Image Upload */}
-        <div className="mb-4">
-          <label htmlFor="image" className="block text-gray-700 font-bold mb-2">
-            Equipment Image
-          </label>
-
-          <input
-            id="image"
-            name="image"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          />
-
-          {formError.image && (
-            <p className="mt-1 text-sm text-red-500">{formError.image}</p>
-          )}
-        </div>
-
-        {/* Image Preview */}
-        {formData.image && (
-          <div className="mb-6">
-            <p className="text-gray-700 font-bold mb-2">Image Preview</p>
-
-            <img
-              src={URL.createObjectURL(formData.image)}
-              alt="Equipment preview"
-              className="h-48 w-full object-cover rounded-md border"
+          <span className="flex flex-col md:grid md:grid-cols-2 gap-2">
+            {/* Equipment Name */}
+            <InputFormComponent
+              label="Equipment Name"
+              type="text"
+              name="equipment_name"
+              value={formData.equipment_name}
+              onChange={handleChange}
+              error={formError.equipment_name}
+              helper=""
             />
-          </div>
-        )}
 
-        {/* Submit */}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-        >
-          Add Equipment
-        </button>
-      </form>
+            {/* Category */}
+
+            {/* Serial Number */}
+            <InputFormComponent
+              label="Serial Number"
+              type="text"
+              name="serial_number"
+              value={formData.serial_number}
+              onChange={handleChange}
+              error={formError.serial_number}
+              helper=""
+            />
+
+            {/* Note */}
+            <InputFormComponent
+              label="Note"
+              type="text"
+              name="note"
+              value={formData.note}
+              onChange={handleChange}
+              error={formError.note}
+              helper=""
+            />
+          </span>
+          <span className="w-full md:w-1/2 gap-3 flex flex-col">
+            {/* Status */}
+            <SelectFormComponent
+              label="Status"
+              name="status"
+              value={formData.status}
+              values={["available", "borrowed", "maintenance", "retire"]}
+              onChange={handleChange}
+              error={formError.status}
+              helper=""
+            />
+
+            <SelectFormComponent
+              label="Category"
+              name="category"
+              value={formData.category}
+              values={["Heavy Equipment", "Power Tools", "Hand Tools"]}
+              onChange={handleChange}
+              error={formError.category}
+              helper=""
+            />
+
+            {/* Condition */}
+            <SelectFormComponent
+              label="Condition"
+              name="condition"
+              value={formData.condition}
+              values={["excellent", "good", "fair", "poor"]}
+              onChange={handleChange}
+              error={formError.condition}
+              helper=""
+            />
+          </span>
+          <span className="flex w-full items-center justify-center mt-8">
+            {/* Submit */}
+            <button
+              type="submit"
+              className="min-w-[120px] w-fit  bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+            >
+              Add Equipment
+            </button>
+          </span>
+        </form>
+      </div>
     </div>
   );
 };
