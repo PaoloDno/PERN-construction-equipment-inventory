@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 
 const path = require("path");
 
@@ -17,12 +18,32 @@ const PORT = 5000;
 
 connectDB();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://pern-construction-equipment-inventory.onrender.com"
+]
 
-app.use(cors({
-    origin: "http://localhost:5173",
+
+app.use(
+  cors({
+    origin: allowedOrigins,
     credentials: true,
-}));
+  })
+);
+
 app.use(express.json());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
+    error: "Too many requests, please try again later.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use("/api", limiter);
 
 app.use(
   "/uploads",
