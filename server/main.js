@@ -20,7 +20,7 @@ connectDB();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://pern-construction-equipment-inventory.onrender.com"
+  "https://pern-construction-equipment-inventory-3p6d.onrender.com"
 ]
 
 
