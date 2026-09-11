@@ -2,7 +2,7 @@ const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export const api = async (
   endpoint,
-  { method = "GET", body = null, token = null } = {}
+  { method = "GET", body = null, token = null } = {},
 ) => {
   const headers = {};
 
@@ -21,12 +21,13 @@ export const api = async (
 
   const response = await fetch(`${baseURL}${endpoint}`, {
     method,
-    headers,
-    body: body
-      ? isFormData
-        ? body
-        : JSON.stringify(body)
-      : undefined,
+    mode: "cors",
+    headers: {
+      ...headers,
+      "Access-Control-Allow-Origin":
+        "https://pern-construction-equipment-inventory-3p6d.onrender.com",
+    },
+    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
   });
 
   const data = await response.json();
