@@ -21,16 +21,25 @@ export const api = async (
 
   const response = await fetch(`${baseURL}${endpoint}`, {
     method,
-    mode: "cors",
-    headers: {
-      ...headers,
-      "Access-Control-Allow-Origin":
-        "https://pern-construction-equipment-inventory-3p6d.onrender.com",
-    },
-    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
+    headers,
+    body: body 
+    ? isFormData 
+      ? body 
+      : JSON.stringify(body) 
+    : undefined,
   });
 
-  const data = await response.json();
+  const text = await response.text();
+
+  let data = {};
+
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = {
+      message: "Server returned an invalid response.",
+    };
+  }
 
   if (!response.ok) {
     throw new Error(data.message || "Something went wrong.");
